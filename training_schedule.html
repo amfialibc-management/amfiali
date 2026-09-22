@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🏀 Εβδομαδιαίο Πρόγραμμα Προπονήσεων</title>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;background:#f0f4f8;min-height:100vh}
+nav{position:sticky;top:0;z-index:100;background:#1a3a6a;padding:10px 16px;display:flex;align-items:center;gap:10px;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+nav a{color:#fff;text-decoration:none;font-size:14px;opacity:.8;transition:opacity .2s}
+nav a:hover{opacity:1}
+nav .title{color:#fff;font-weight:700;font-size:16px;margin-right:auto}
+.app{max-width:1100px;margin:0 auto;padding:16px}
+h2{font-size:20px;font-weight:700;color:#1a3a6a;margin-bottom:16px}
+
+/* Filters */
+.filters-card{background:#fff;border-radius:12px;padding:14px 16px;margin-bottom:18px;box-shadow:0 1px 6px rgba(0,0,0,.1);display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field{display:flex;flex-direction:column;gap:4px}
+.lbl{font-size:11px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.4px}
+select,input,textarea{border:1.5px solid #dde3ea;border-radius:8px;padding:8px 10px;font-size:14px;background:#fff;color:#222;width:100%}
+select:focus,input:focus,textarea:focus{outline:none;border-color:#1a3a6a}
+textarea{resize:vertical;min-height:60px}
+
+/* Buttons */
+.btn-primary{background:#1a3a6a;color:#fff;border:none;border-radius:8px;padding:9px 18px;font-size:14px;font-weight:700;cursor:pointer;transition:opacity .2s}
+.btn-primary:hover{opacity:.85}
+.btn-danger{background:#fff;color:#c00;border:1.5px solid #c00;border-radius:8px;padding:6px 14px;font-size:13px;font-weight:600;cursor:pointer}
+.btn-danger:hover{background:#fff0f0}
+.btn-edit{background:#fff;color:#1a3a6a;border:1.5px solid #1a3a6a;border-radius:8px;padding:6px 14px;font-size:13px;font-weight:600;cursor:pointer}
+.btn-edit:hover{background:#eef2ff}
+.btn-sm{padding:5px 12px;font-size:12px}
+
+/* Week grid */
+.week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;margin-top:4px}
+.day-col{background:#fff;border-radius:12px;box-shadow:0 1px 5px rgba(0,0,0,.09);overflow:hidden;min-height:120px}
+.day-header{background:#1a3a6a;color:#fff;text-align:center;padding:8px 4px;font-size:13px;font-weight:700}
+.day-slots{padding:8px;display:flex;flex-direction:column;gap:6px}
+.training-card{border-radius:8px;padding:8px 10px;font-size:12px;position:relative;border-left:4px solid transparent}
+.training-card .tc-team{font-weight:700;font-size:13px;margin-bottom:2px}
+.training-card .tc-time{color:#555;font-size:11px}
+.training-card .tc-venue{color:#777;font-size:11px;margin-top:2px}
+.training-card .tc-notes{color:#888;font-size:11px;font-style:italic;margin-top:3px;border-top:1px solid rgba(0,0,0,.08);padding-top:3px}
+.training-card .tc-actions{display:flex;gap:5px;margin-top:6px}
+.no-trainings{color:#aaa;font-size:12px;text-align:center;padding:12px 4px}
+
+/* Modal */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:16px;padding:24px;width:94%;max-width:440px;box-shadow:0 8px 40px rgba(0,0,0,.25);max-height:90vh;overflow-y:auto}
+.modal h3{font-size:18px;font-weight:700;color:#1a3a6a;margin-bottom:18px}
+.modal .field{margin-bottom:12px}
+.modal-actions{display:flex;gap:10px;margin-top:18px;justify-content:flex-end}
+
+/* Team colors */
+.team-andriko{background:#e8f3fd;border-left-color:#1a6fa8}
+.team-efiviko{background:#fdf0e8;border-left-color:#8a3a0a}
+.team-korasides{background:#e8f9f0;border-left-color:#1a7a3f}
+.team-neanides{background:#fde8f5;border-left-color:#a81a6f}
+.team-paidiko{background:#e8f9fb;border-left-color:#0a7a8a}
+.team-ak2016{background:#fdeaea;border-left-color:#c0392b}
+.team-ak2018{background:#fff4e0;border-left-color:#c47000}
+.team-ak2010{background:#e8f9f0;border-left-color:#1a7a3f}
+.team-ak2012a{background:#f5ece3;border-left-color:#8b4513}
+.team-ak2012{background:#e8f3fd;border-left-color:#1a6fa8}
+.team-ak2014{background:#f0e8fd;border-left-color:#7b2fa8}
+.team-koritsiaa{background:#fde8f5;border-left-color:#a81a6f}
+.team-koritsab{background:#ffe8f2;border-left-color:#d4006a}
+
+/* Toast */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:10px 22px;border-radius:20px;font-size:14px;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.show{opacity:1}
+
+/* Add button */
+.add-btn-wrap{margin-bottom:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+
+@media(max-width:900px){.week-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:600px){.week-grid{grid-template-columns:1fr 1fr}.filters-card{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="title">🏀 Πρόγραμμα Προπονήσεων</span>
+  <a href="index.html">🏠 Αρχική</a>
+  <a href="schedule.html">📅 Αγώνες</a>
+</nav>
+
+<div class="app">
+  <h2>Εβδομαδιαίο Πρόγραμμα Προπονήσεων</h2>
+
+  <div class="filters-card">
+    <div class="field">
+      <div class="lbl">Ομάδα</div>
+      <select id="filterTeam" onchange="renderGrid()">
+        <option value="">Όλες οι ομάδες</option>
+        <option value="Ανδρικό">Ανδρικό</option>
+        <option value="Εφηβικό">Εφηβικό</option>
+        <option value="Κορασίδες">Κορασίδες</option>
+        <option value="Νεανίδες">Νεανίδες</option>
+        <option value="Παιδικό">Παιδικό</option>
+        <option value="2016-2019">Ακαδ. 2016-2019</option>
+        <option value="2018-2019-2020">Ακαδ. 2018-2019-2020</option>
+        <option value="2010-2011">Ακαδ. 2010-2011</option>
+        <option value="2012-2013 Α">Ακαδ. 2012-2013 Α</option>
+        <option value="2012-2013-2014">Ακαδ. 2012-2013-2014</option>
+        <option value="2014-2015-2016">Ακαδ. 2014-2015-2016</option>
+        <option value="Κορίτσια Α">Ακαδ. Κορίτσια Α</option>
+        <option value="Κορίτσια Β">Ακαδ. Κορίτσια Β</option>
+      </select>
+    </div>
+    <div class="field">
+      <div class="lbl">Γήπεδο</div>
+      <select id="filterVenue" onchange="renderGrid()">
+        <option value="">Όλα τα γήπεδα</option>
+        <option value="Σιταποθήκες">Σιταποθήκες</option>
+        <option value="Άλλο">Άλλο</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="add-btn-wrap" id="addBtnWrap" style="display:none">
+    <button class="btn-primary" onclick="openModal()">➕ Προσθήκη Προπόνησης</button>
+  </div>
+
+  <div class="week-grid" id="weekGrid"></div>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h3 id="modalTitle">Προσθήκη Προπόνησης</h3>
+    <input type="hidden" id="editId">
+    <div class="field">
+      <div class="lbl">Ομάδα *</div>
+      <select id="mTeam">
+        <option value="">-- Επιλογή --</option>
+        <option value="Ανδρικό">Ανδρικό</option>
+        <option value="Εφηβικό">Εφηβικό</option>
+        <option value="Κορασίδες">Κορασίδες</option>
+        <option value="Νεανίδες">Νεανίδες</option>
+        <option value="Παιδικό">Παιδικό</option>
+        <option value="2016-2019">Ακαδ. 2016-2019</option>
+        <option value="2018-2019-2020">Ακαδ. 2018-2019-2020</option>
+        <option value="2010-2011">Ακαδ. 2010-2011</option>
+        <option value="2012-2013 Α">Ακαδ. 2012-2013 Α</option>
+        <option value="2012-2013-2014">Ακαδ. 2012-2013-2014</option>
+        <option value="2014-2015-2016">Ακαδ. 2014-2015-2016</option>
+        <option value="Κορίτσια Α">Ακαδ. Κορίτσια Α</option>
+        <option value="Κορίτσια Β">Ακαδ. Κορίτσια Β</option>
+      </select>
+    </div>
+    <div class="field">
+      <div class="lbl">Ημέρα *</div>
+      <select id="mDay">
+        <option value="">-- Επιλογή --</option>
+        <option value="Δευτέρα">Δευτέρα</option>
+        <option value="Τρίτη">Τρίτη</option>
+        <option value="Τετάρτη">Τετάρτη</option>
+        <option value="Πέμπτη">Πέμπτη</option>
+        <option value="Παρασκευή">Παρασκευή</option>
+        <option value="Σάββατο">Σάββατο</option>
+        <option value="Κυριακή">Κυριακή</option>
+      </select>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="field">
+        <div class="lbl">Ώρα έναρξης *</div>
+        <input type="time" id="mTimeStart">
+      </div>
+      <div class="field">
+        <div class="lbl">Ώρα λήξης</div>
+        <input type="time" id="mTimeEnd">
+      </div>
+    </div>
+    <div class="field">
+      <div class="lbl">Γήπεδο</div>
+      <input type="text" id="mVenue" placeholder="π.χ. Σιταποθήκες">
+    </div>
+    <div class="field">
+      <div class="lbl">Σημειώσεις</div>
+      <textarea id="mNotes" placeholder="Προαιρετικό..."></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-edit" onclick="closeModal()">Ακύρωση</button>
+      <button class="btn-primary" onclick="saveTraining()">💾 Αποθήκευση</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var firebaseConfig={apiKey:"AIzaSyCZZnZSz8zpChx-7ScaISKehoebtO1A-qY",authDomain:"amfiali-d773b.firebaseapp.com",projectId:"amfiali-d773b",storageBucket:"amfiali-d773b.firebasestorage.app",messagingSenderId:"972320918445",appId:"1:972320918445:web:e4674ddb6b790c07efaf24"};
+firebase.initializeApp(firebaseConfig);
+var db=firebase.firestore();
+var auth=firebase.auth();
+
+var _role=localStorage.getItem('amfiali_role')||'viewer';
+var _canEdit=(_role==='admin'||_role==='coach');
+
+var DAYS=['Δευτέρα','Τρίτη','Τετάρτη','Πέμπτη','Παρασκευή','Σάββατο','Κυριακή'];
+
+var TEAM_CLASS={
+  'Ανδρικό':'team-andriko',
+  'Εφηβικό':'team-efiviko',
+  'Κορασίδες':'team-korasides',
+  'Νεανίδες':'team-neanides',
+  'Παιδικό':'team-paidiko',
+  '2016-2019':'team-ak2016',
+  '2018-2019-2020':'team-ak2018',
+  '2010-2011':'team-ak2010',
+  '2012-2013 Α':'team-ak2012a',
+  '2012-2013-2014':'team-ak2012',
+  '2014-2015-2016':'team-ak2014',
+  'Κορίτσια Α':'team-koritsiaa',
+  'Κορίτσια Β':'team-koritsab'
+};
+
+var allTrainings=[];
+
+// Auth check
+auth.onAuthStateChanged(function(user){
+  if(!user){window.location.href='login.html';return;}
+  if(_canEdit){
+    document.getElementById('addBtnWrap').style.display='flex';
+  }
+  loadTrainings();
+});
+
+function loadTrainings(){
+  db.collection('training_schedule').orderBy('day_order').onSnapshot(function(snap){
+    allTrainings=[];
+    snap.forEach(function(d){allTrainings.push(Object.assign({id:d.id},d.data()));});
+    renderGrid();
+  },function(){
+    db.collection('training_schedule').get().then(function(snap){
+      allTrainings=[];
+      snap.forEach(function(d){allTrainings.push(Object.assign({id:d.id},d.data()));});
+      renderGrid();
+    });
+  });
+}
+
+function renderGrid(){
+  var filterTeam=document.getElementById('filterTeam').value;
+  var filterVenue=document.getElementById('filterVenue').value;
+
+  var filtered=allTrainings.filter(function(t){
+    if(filterTeam&&t.team!==filterTeam)return false;
+    if(filterVenue&&(t.venue||'').indexOf(filterVenue)<0)return false;
+    return true;
+  });
+
+  var grid=document.getElementById('weekGrid');
+  grid.innerHTML='';
+
+  DAYS.forEach(function(day){
+    var col=document.createElement('div');
+    col.className='day-col';
+
+    var hdr=document.createElement('div');
+    hdr.className='day-header';
+    hdr.textContent=day;
+    col.appendChild(hdr);
+
+    var slots=document.createElement('div');
+    slots.className='day-slots';
+
+    var dayItems=filtered.filter(function(t){return t.day===day;});
+    dayItems.sort(function(a,b){return (a.time_start||'').localeCompare(b.time_start||'');});
+
+    if(dayItems.length===0){
+      var nd=document.createElement('div');
+      nd.className='no-trainings';
+      nd.textContent='—';
+      slots.appendChild(nd);
+    } else {
+      dayItems.forEach(function(t){
+        var card=document.createElement('div');
+        card.className='training-card '+(TEAM_CLASS[t.team]||'');
+
+        var timeStr=t.time_start||'';
+        if(t.time_end)timeStr+=' - '+t.time_end;
+
+        card.innerHTML='<div class="tc-team">'+esc(t.team)+'</div>'
+          +(timeStr?'<div class="tc-time">🕐 '+esc(timeStr)+'</div>':'')
+          +(t.venue?'<div class="tc-venue">📍 '+esc(t.venue)+'</div>':'')
+          +(t.notes?'<div class="tc-notes">'+esc(t.notes)+'</div>':'')
+          +(_canEdit?'<div class="tc-actions"><button class="btn-edit btn-sm" onclick="editTraining(\''+t.id+'\')">✏️</button><button class="btn-danger btn-sm" onclick="deleteTraining(\''+t.id+'\',\''+esc(t.team)+'\')">🗑️</button></div>':'');
+
+        slots.appendChild(card);
+      });
+    }
+
+    col.appendChild(slots);
+    grid.appendChild(col);
+  });
+}
+
+function esc(s){
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function openModal(data){
+  document.getElementById('modalTitle').textContent=data?'Επεξεργασία Προπόνησης':'Προσθήκη Προπόνησης';
+  document.getElementById('editId').value=data?data.id:'';
+  document.getElementById('mTeam').value=data?data.team:'';
+  document.getElementById('mDay').value=data?data.day:'';
+  document.getElementById('mTimeStart').value=data?data.time_start:'';
+  document.getElementById('mTimeEnd').value=data?data.time_end:'';
+  document.getElementById('mVenue').value=data?data.venue:'';
+  document.getElementById('mNotes').value=data?data.notes:'';
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function closeModal(){
+  document.getElementById('modalOverlay').classList.remove('open');
+}
+
+function editTraining(id){
+  var t=allTrainings.find(function(x){return x.id===id;});
+  if(t)openModal(t);
+}
+
+function deleteTraining(id,team){
+  if(!confirm('Διαγραφή προπόνησης για '+team+';'))return;
+  db.collection('training_schedule').doc(id).delete().then(function(){
+    showToast('Διαγράφηκε');
+  });
+}
+
+function saveTraining(){
+  var team=document.getElementById('mTeam').value.trim();
+  var day=document.getElementById('mDay').value;
+  var timeStart=document.getElementById('mTimeStart').value;
+  var timeEnd=document.getElementById('mTimeEnd').value;
+  var venue=document.getElementById('mVenue').value.trim();
+  var notes=document.getElementById('mNotes').value.trim();
+  var editId=document.getElementById('editId').value;
+
+  if(!team||!day||!timeStart){showToast('Συμπλήρωσε Ομάδα, Ημέρα και Ώρα έναρξης');return;}
+
+  var dayOrder=DAYS.indexOf(day);
+  var data={team:team,day:day,day_order:dayOrder,time_start:timeStart,time_end:timeEnd,venue:venue,notes:notes,updated:new Date().toISOString()};
+
+  var p=editId
+    ?db.collection('training_schedule').doc(editId).update(data)
+    :db.collection('training_schedule').add(data);
+
+  p.then(function(){
+    closeModal();
+    showToast(editId?'Ενημερώθηκε!':'Προστέθηκε!');
+  }).catch(function(e){showToast('Σφάλμα: '+e.message);});
+}
+
+function showToast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.add('show');
+  setTimeout(function(){t.classList.remove('show');},2500);
+}
+
+// Close modal on overlay click
+document.getElementById('modalOverlay').addEventListener('click',function(e){
+  if(e.target===this)closeModal();
+});
+</script>
+</body>
+</html>
