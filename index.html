@@ -472,7 +472,15 @@ if(_userRole==='coach'||_userRole==='viewer'){
   });
   // Schedule button
   var schedBtn=document.querySelector('a[href="schedule.html"]');
+  var trainBtn=document.querySelector('a[href="training_schedule.html"]');
   if(schedBtn&&_userPerms.indexOf('schedule')<0){
+    schedBtn.style.display='none';
+  }
+  if(trainBtn&&_userPerms.indexOf('training')<0){
+    trainBtn.style.display='none';
+  }
+  // If both hidden, hide the whole div
+  if(schedBtn&&trainBtn&&_userPerms.indexOf('schedule')<0&&_userPerms.indexOf('training')<0){
     schedBtn.closest('div').style.display='none';
   }
   // Search

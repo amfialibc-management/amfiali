@@ -225,6 +225,14 @@ var allTrainings=[];
 // Auth check
 auth.onAuthStateChanged(function(user){
   if(!user){window.location.href='login.html';return;}
+  // Permission check for non-admins
+  if(_role!=='admin'){
+    var perms=JSON.parse(localStorage.getItem('amfiali_permissions')||'[]');
+    if(perms.indexOf('training')<0){
+      document.body.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:system-ui"><div style="text-align:center"><div style="font-size:48px">🔒</div><div style="font-size:18px;font-weight:700;color:#1a3a6a;margin-top:12px">Δεν έχετε πρόσβαση</div><div style="font-size:14px;color:#888;margin-top:6px">Επικοινωνήστε με τον διαχειριστή</div><a href="index.html" style="display:inline-block;margin-top:20px;padding:10px 24px;background:#1a3a6a;color:#fff;border-radius:8px;text-decoration:none;font-weight:700">← Αρχική</a></div></div>';
+      return;
+    }
+  }
   if(_canEdit){
     document.getElementById('addBtnWrap').style.display='flex';
   }
