@@ -18,7 +18,7 @@ nav .title{color:#fff;font-weight:700;font-size:16px;margin-right:auto}
 h2{font-size:20px;font-weight:700;color:#1a3a6a;margin-bottom:16px}
 
 /* Filters */
-.filters-card{background:#fff;border-radius:12px;padding:14px 16px;margin-bottom:18px;box-shadow:0 1px 6px rgba(0,0,0,.1);display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.filters-card{background:#fff;border-radius:12px;padding:14px 16px;margin-bottom:18px;box-shadow:0 1px 6px rgba(0,0,0,.1);display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
 .field{display:flex;flex-direction:column;gap:4px}
 .lbl{font-size:11px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.4px}
 select,input,textarea{border:1.5px solid #dde3ea;border-radius:8px;padding:8px 10px;font-size:14px;background:#fff;color:#222;width:100%}
@@ -116,14 +116,29 @@ textarea{resize:vertical;min-height:60px}
       <div class="lbl">Γήπεδο</div>
       <select id="filterVenue" onchange="renderGrid()">
         <option value="">Όλα τα γήπεδα</option>
-        <option value="Σιταποθήκες">Σιταποθήκες</option>
-        <option value="Άλλο">Άλλο</option>
+        <option value="Ανοικτό Σιταποθηκών">Ανοικτό Σιταποθηκών</option>
+        <option value="Κλειστό Σιταποθηκών">Κλειστό Σιταποθηκών</option>
+        <option value="Δεμερτζή">Δεμερτζή</option>
+      </select>
+    </div>
+    <div class="field">
+      <div class="lbl">Ημέρα</div>
+      <select id="filterDay" onchange="renderGrid()">
+        <option value="">Όλες οι μέρες</option>
+        <option value="Δευτέρα">Δευτέρα</option>
+        <option value="Τρίτη">Τρίτη</option>
+        <option value="Τετάρτη">Τετάρτη</option>
+        <option value="Πέμπτη">Πέμπτη</option>
+        <option value="Παρασκευή">Παρασκευή</option>
+        <option value="Σάββατο">Σάββατο</option>
+        <option value="Κυριακή">Κυριακή</option>
       </select>
     </div>
   </div>
 
-  <div class="add-btn-wrap" id="addBtnWrap" style="display:none">
-    <button class="btn-primary" onclick="openModal()">➕ Προσθήκη Προπόνησης</button>
+  <div class="add-btn-wrap" id="addBtnWrap">
+    <button class="btn-primary" id="addBtn" onclick="openModal()" style="display:none">➕ Προσθήκη Προπόνησης</button>
+    <a href="sitatopoikes_schedule.html" class="btn-primary" style="text-decoration:none;background:#0a5a4a">🏟️ Πρόγραμμα Κλειστού Σιταποθηκών</a>
   </div>
 
   <div class="week-grid" id="weekGrid"></div>
@@ -178,7 +193,12 @@ textarea{resize:vertical;min-height:60px}
     </div>
     <div class="field">
       <div class="lbl">Γήπεδο</div>
-      <input type="text" id="mVenue" placeholder="π.χ. Σιταποθήκες">
+      <select id="mVenue">
+        <option value="">-- Επιλογή --</option>
+        <option value="Ανοικτό Σιταποθηκών">Ανοικτό Σιταποθηκών</option>
+        <option value="Κλειστό Σιταποθηκών">Κλειστό Σιταποθηκών</option>
+        <option value="Δεμερτζή">Δεμερτζή</option>
+      </select>
     </div>
     <div class="field">
       <div class="lbl">Σημειώσεις</div>
@@ -234,7 +254,8 @@ auth.onAuthStateChanged(function(user){
     }
   }
   if(_canEdit){
-    document.getElementById('addBtnWrap').style.display='flex';
+    var ab=document.getElementById('addBtn');
+    if(ab)ab.style.display='';
   }
   loadTrainings();
 });
@@ -256,6 +277,7 @@ function loadTrainings(){
 function renderGrid(){
   var filterTeam=document.getElementById('filterTeam').value;
   var filterVenue=document.getElementById('filterVenue').value;
+  var filterDay=document.getElementById('filterDay').value;
 
   var filtered=allTrainings.filter(function(t){
     if(filterTeam&&t.team!==filterTeam)return false;
@@ -266,7 +288,8 @@ function renderGrid(){
   var grid=document.getElementById('weekGrid');
   grid.innerHTML='';
 
-  DAYS.forEach(function(day){
+  var daysToShow=filterDay?[filterDay]:DAYS;
+  daysToShow.forEach(function(day){
     var col=document.createElement('div');
     col.className='day-col';
 
@@ -320,7 +343,7 @@ function openModal(data){
   document.getElementById('mDay').value=data?data.day:'';
   document.getElementById('mTimeStart').value=data?data.time_start:'';
   document.getElementById('mTimeEnd').value=data?data.time_end:'';
-  document.getElementById('mVenue').value=data?data.venue:'';
+  document.getElementById('mVenue').value=data?(data.venue||''):'';
   document.getElementById('mNotes').value=data?data.notes:'';
   document.getElementById('modalOverlay').classList.add('open');
 }
