@@ -84,6 +84,10 @@ h2{font-size:13px;color:#666;font-weight:400;margin-bottom:20px}
     <span id="totalCount" style="font-size:12px;font-weight:700;color:#888">—</span>
   </div>
 
+  <div id="prokSection" style="display:none;margin-top:10px">
+    <a href="prokirikseis.html" class="btn" style="background:#5a1a6a;color:#fff;justify-content:center;text-decoration:none;display:flex;align-items:center">📋 Προκηρύξεις</a>
+  </div>
+
   <div id="adminSection" style="display:none;margin-top:16px">
     <a href="admin_users.html" class="btn" style="background:#1a3a6a;color:#fff;justify-content:center">👤 Διαχείριση Χρηστών</a>
   </div>
@@ -438,6 +442,8 @@ var _userPerms=JSON.parse(localStorage.getItem('amfiali_permissions')||'[]');
 
 // Show admin panel button
 if(_userRole==='admin'){
+  var prokSecAdmin=document.getElementById('prokSection');
+  if(prokSecAdmin)prokSecAdmin.style.display='block';
   var adminSec=document.getElementById('adminSection');
   if(adminSec)adminSec.style.display='block';
   var totalSec=document.getElementById('totalSection');
@@ -452,7 +458,7 @@ if(_userRole==='coach'||_userRole==='viewer'){
   var allBtns=document.querySelectorAll('a.btn[href]');
   allBtns.forEach(function(btn){
     var href=btn.getAttribute('href');
-    if(href==='schedule.html'||href==='admin_users.html'||href==='training_schedule.html')return;
+    if(href==='schedule.html'||href==='admin_users.html'||href==='training_schedule.html'||href==='prokirikseis.html')return;
     if(_userTeams.indexOf(href)<0){
       btn.style.display='none';
     }
@@ -482,6 +488,16 @@ if(_userRole==='coach'||_userRole==='viewer'){
   // If both hidden, hide the whole div
   if(schedBtn&&trainBtn&&_userPerms.indexOf('schedule')<0&&_userPerms.indexOf('training')<0){
     schedBtn.closest('div').style.display='none';
+  }
+  // Prokirikseis button
+  var prokBtn=document.querySelector('a[href="prokirikseis.html"]');
+  if(prokBtn&&_userPerms.indexOf('prokirikseis')<0){
+    prokBtn.style.display='none';
+    var prokSec=document.getElementById('prokSection');
+    if(prokSec)prokSec.style.display='none';
+  } else if(prokBtn){
+    var prokSec=document.getElementById('prokSection');
+    if(prokSec)prokSec.style.display='block';
   }
   // Search
   var sw=document.querySelector('.search-wrap');
