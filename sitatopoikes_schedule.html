@@ -27,7 +27,7 @@ h2{font-size:20px;font-weight:700;color:#1a3a6a;margin-bottom:2px}
 /* Table wrapper — horizontal scroll on small screens */
 .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:14px;box-shadow:0 2px 12px rgba(0,0,0,.12)}
 table{border-collapse:collapse;background:#fff;width:1100px;min-width:1100px;table-layout:fixed}
-/* Column widths: Δευτέρα wider, rest equal */
+/* Column widths */
 col.wide{width:200px}
 col.narrow{width:110px}
 col.mid{width:143px}
@@ -91,7 +91,8 @@ tbody tr:hover td{background:#f8fbff}
       <colgroup>
         <col class="wide"><!-- Δευτέρα -->
         <col class="narrow"><!-- Τρίτη -->
-        <col class="mid"><!-- Τετάρτη -->
+        <col class="narrow"><!-- Τετάρτη -->
+        <col class="mid"><!-- **Τετάρτη -->
         <col class="narrow"><!-- Πέμπτη -->
         <col class="mid"><!-- **Πέμπτη -->
         <col class="narrow"><!-- Παρασκευή -->
@@ -102,7 +103,8 @@ tbody tr:hover td{background:#f8fbff}
         <tr>
           <th>Δευτέρα</th>
           <th>Τρίτη</th>
-          <th class="hl">Τετάρτη<small>**Όταν η Αμφιάλη έχει αγώνα Νεανίδων 22.00</small></th>
+          <th>Τετάρτη</th>
+          <th class="hl">**Τετάρτη<small>Όταν η Αμφιάλη έχει αγώνα Νεανίδων 22.00</small></th>
           <th>Πέμπτη</th>
           <th class="hl">**Πέμπτη<small>Όταν ο Άρης έχει αγώνα 21.45</small></th>
           <th>Παρασκευή</th>
@@ -116,7 +118,8 @@ tbody tr:hover td{background:#f8fbff}
           <td><div class="slot amf">Εν. Αμφιάλης<br>15:00 - 16:30</div></td>
           <td><div class="slot amf">Εν. Αμφιάλης<br>15:00 - 16:00</div></td>
           <td><div class="slot aris">Άρης<br>15:00 - 16:30</div></td>
-          <td><div class="slot amf">Εν. Αμφιάλης<br>15:00 - 16:30</div></td>
+          <td><div class="slot aris">Άρης<br>15:00 - 16:30</div></td>
+          <td><div class="slot amf">Εν. Αμφιάλης<br>15:00 - 17:30</div></td>
           <td><div class="slot amf">Εν. Αμφιάλης<br>15:00 - 17:30</div></td>
           <td><div class="slot aris">Άρης<br>15:00 - 17:00</div></td>
           <td><div class="slot aris">Άρης<br>09:00 - 11:00</div></td>
@@ -128,6 +131,7 @@ tbody tr:hover td{background:#f8fbff}
           <td><div class="slot aris">Άρης<br>16:00 - 17:00</div></td>
           <td><div class="slot amf">Εν. Αμφιάλης<br>16:30 - 19:00</div></td>
           <td><div class="slot amf">Εν. Αμφιάλης<br>16:30 - 18:45</div></td>
+          <td><div class="slot olym">Ολυμπιακός<br>17:30 - 20:30</div></td>
           <td><div class="slot olym">Ολυμπιακός<br>17:30 - 19:30</div></td>
           <td><div class="slot amf">Εν. Αμφιάλης<br>17:00 - 19:30</div></td>
           <td><div class="slot amf">Εν. Αμφιάλης<br>11:00 - 15:30</div></td>
@@ -139,6 +143,7 @@ tbody tr:hover td{background:#f8fbff}
           <td><div class="slot olym">Ολυμπιακός<br>17:00 - 20:30</div></td>
           <td><div class="slot olym">Ολυμπιακός<br>19:00 - 20:30</div></td>
           <td><div class="slot olym">Ολυμπιακός<br>18:45 - 20:15</div></td>
+          <td><div class="slot aris">Άρης<br>20:30 - 22:00</div></td>
           <td>
             <div class="slot olym">Ολυμπιακός<br>19:30 - 20:30</div>
             <div class="slot shared">20:10 - 20:30 / 20 λεπτά κοινά με μπάσκετ</div>
@@ -153,10 +158,10 @@ tbody tr:hover td{background:#f8fbff}
           <td><div class="slot aris">Άρης<br>20:30 - 21:30</div></td>
           <td><div class="slot aris">Άρης<br>20:30 - 22:00</div></td>
           <td><div class="slot aris">Άρης<br>20:15 - 21:30</div></td>
+          <td><div class="slot amf">Εν. Αμφιάλης<br>22:00 - 23:30</div></td>
           <td>
             <div class="slot amf">Εν. Αμφιάλης<br>20:10 - 21:10</div>
             <div class="slot shared">20:10 - 20:30 / 20 λεπτά κοινά με handball</div>
-            <div class="slot amf">Εν. Αμφιάλης<br>22:00 - 23:30</div>
           </td>
           <td><div class="slot amf">Εν. Αμφιάλης<br>21:00 - 23:30</div></td>
           <td><div class="slot olym">Ολυμπιακός<br>18:00 - 23:00</div></td>
@@ -165,12 +170,13 @@ tbody tr:hover td{background:#f8fbff}
         <!-- Row 5 -->
         <tr>
           <td><div class="note-cell">* Σε περίπτωση αγώνα της Εν. Αμφιάλης εκτός έδρας τις Δευτέρες, ο Ολυμπιακός έχει 21:30 - 23:30</div></td>
-          <td><div class="slot aris">Άρης<br>20:30 - 22:00</div></td>
+          <td><div class="slot amf">Εν. Αμφιάλης<br>22:00 - 23:30</div></td>
+          <td><div class="slot amf">Εν. Αμφιάλης<br>22:00 - 23:30</div></td>
           <td>
             <div class="slot amf">Εν. Αμφιάλης<br>21:30 - ...</div>
             <div class="game">Αγώνας Νεανίδων</div>
           </td>
-          <td><div class="slot amf">Εν. Αμφιάλης<br>22:00 - 23:30</div></td>
+          <td></td>
           <td>
             <div class="slot aris">Άρης<br>21:15 - ...</div>
             <div class="game">Αγώνας</div>
