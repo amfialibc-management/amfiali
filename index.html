@@ -49,15 +49,20 @@ h2{font-size:13px;color:#666;font-weight:400;margin-bottom:20px}
 .main-content{width:100%}
 /* Desktop layout */
 @media(min-width:768px){
-  .wrap{max-width:1200px;display:flex;flex-wrap:nowrap;align-items:flex-start;text-align:left;padding:32px 32px;gap:28px}
-  /* Σε desktop το logo μπαίνει μέσα στο sidebar — κρύβουμε το standalone desktop-header */
+  body{background:#eef2f7}
+  .wrap{max-width:1280px;display:flex;flex-wrap:nowrap;align-items:flex-start;text-align:left;padding:28px 28px;gap:24px}
   .desktop-header{display:none}
-  .sidebar{width:300px;flex-shrink:0;position:sticky;top:24px;background:#fff;border-radius:14px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,.08);align-self:flex-start}
-  .sidebar-logo{display:block;text-align:center;padding-bottom:14px;margin-bottom:8px;border-bottom:1px solid #eee}
-  .sidebar-logo img{width:70px;height:70px;object-fit:contain;margin-bottom:6px}
-  .main-content{flex:1;min-width:0}
-  .main-content .search-wrap{margin-top:0;border-top:none;padding-top:0}
-  .main-content .io-wrap{margin-top:12px}
+  /* SIDEBAR */
+  .sidebar{width:340px;flex-shrink:0;position:sticky;top:24px;background:#fff;border-radius:16px;padding:24px 20px;box-shadow:0 2px 12px rgba(0,0,0,.1);align-self:flex-start;max-height:calc(100vh - 48px);overflow-y:auto}
+  .sidebar-logo{display:block;text-align:center;padding-bottom:16px;margin-bottom:12px;border-bottom:2px solid #f0f0f0}
+  .sidebar-logo img{width:72px;height:72px;object-fit:contain;margin-bottom:8px}
+  .sidebar .section{font-size:11px;letter-spacing:1.5px;color:#aaa;margin:14px 0 6px}
+  .sidebar .btn{padding:10px 14px;font-size:14px;border-radius:9px;margin-bottom:7px}
+  /* MAIN */
+  .main-content{flex:1;min-width:0;display:flex;flex-direction:column;gap:16px}
+  .main-content .search-wrap{margin-top:0;border-top:none;padding-top:0;background:#fff;border-radius:16px;padding:20px;box-shadow:0 1px 6px rgba(0,0,0,.07)}
+  .main-content .io-wrap{margin-top:0;border-top:none;padding-top:0;background:#fff;border-radius:16px;padding:20px;box-shadow:0 1px 6px rgba(0,0,0,.07)}
+  .main-content>div[style*="margin-top:20px"]{background:#fff;border-radius:16px;padding:20px;box-shadow:0 1px 6px rgba(0,0,0,.07);margin-top:0!important;border-top:none!important;padding-top:20px!important}
 }
 </style>
 <script>
@@ -95,7 +100,7 @@ h2{font-size:13px;color:#666;font-weight:400;margin-bottom:20px}
   <a href="akademies_koritsia_a.html" class="btn" style="background:#a81a6f;color:#fff">🏀 Κορίτσια Α <span id="count_ak_koritsia_a_players" style="font-size:11px;opacity:0.5;font-weight:400;margin-left:4px"></span></a>
   <a href="akademies_koritsia_b.html" class="btn" style="background:#d4006a;color:#fff">🏀 Κορίτσια Β <span id="count_ak_koritsia_b_players" style="font-size:11px;opacity:0.5;font-weight:400;margin-left:4px"></span></a>
 
-  <div style="margin-top:16px;border-top:2px solid #e0e0e0;padding-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
+  <div style="margin-top:16px;border-top:2px solid #e0e0e0;padding-top:16px">
     <a href="schedule.html" class="btn" style="background:#8a3a0a;color:#fff;justify-content:center;text-decoration:none;display:flex;align-items:center">📅 Πρόγραμμα Αγώνων Εβδομάδας</a>
     <a href="training_schedule.html" class="btn" style="background:#0a5a4a;color:#fff;justify-content:center;text-decoration:none;display:flex;align-items:center">🏋️ Πρόγραμμα Προπονήσεων</a>
   </div>
