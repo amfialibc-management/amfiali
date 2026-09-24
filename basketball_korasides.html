@@ -669,7 +669,7 @@ window.addPlayer=async function(){
   const name=document.getElementById('pn').value.trim();
   if(!name){document.getElementById('perr').style.display='block';return;}
   document.getElementById('perr').style.display='none';sync('loading','Αποθήκευση...');
-  await setDoc(doc(db,CP,uid()),{name,num:document.getElementById('pnum').value||'',pos:document.getElementById('ppos').value||'',st:document.getElementById('pst').value,birth:document.getElementById('pbirth').value||'',phone:document.getElementById('pphone').value.trim()||'',notes:document.getElementById('pnotes').value.trim()||''});
+  await setDoc(doc(db,CP,uid()),{name,num:document.getElementById('pnum').value||'',pos:document.getElementById('ppos').value||'',st:document.getElementById('pst').value,birth:document.getElementById('pbirth').value||'',phone:document.getElementById('pphone').value.trim()||'',notes:document.getElementById('pnotes').value.trim()||'',createdAt:new Date().toISOString().slice(0,10)});
   document.getElementById('pn').value='';document.getElementById('pnum').value='';document.getElementById('ppos').value='';document.getElementById('pbirth').value='';document.getElementById('pphone').value='';document.getElementById('pnotes').value='';
 };
 window.delPlayer=async function(id){

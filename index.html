@@ -132,7 +132,10 @@ h2{font-size:13px;color:#666;font-weight:400;margin-bottom:20px}
 
   <div class="io-wrap">
     <div class="io-title">🆕 Νέες Εγγραφές Σεζόν</div>
-    <button class="io-btn io-exp" onclick="loadNewRegistrations()" style="cursor:pointer;margin-bottom:8px">📋 Εμφάνιση νέων εγγραφών</button>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap">
+      <input type="date" id="regFromDate" style="height:36px;border:1px solid #ccc;border-radius:6px;padding:0 8px;font-size:13px;flex:0 0 auto" value="2026-09-01">
+      <button class="io-btn io-exp" onclick="loadNewRegistrations()" style="cursor:pointer;flex:0 0 auto;width:auto">📋 Εμφάνιση εγγραφών από αυτή την ημερομηνία</button>
+    </div>
     <div id="newRegList"></div>
   </div>
 
@@ -387,15 +390,9 @@ async function loadNewRegistrations(){
   el.innerHTML='<p style="font-size:13px;color:#999">Φόρτωση...</p>';
   try{
     // Current season: Sept 1 of current or previous year → June 30 of next year
-    var now=new Date();
-    var seasonStart,seasonEnd;
-    if(now.getMonth()>=8){ // Sept(8) or later → season starts this year
-      seasonStart=now.getFullYear()+'-09-01';
-      seasonEnd=(now.getFullYear()+1)+'-06-30';
-    }else{
-      seasonStart=(now.getFullYear()-1)+'-09-01';
-      seasonEnd=now.getFullYear()+'-06-30';
-    }
+    var fromInput=document.getElementById('regFromDate');
+    var seasonStart=fromInput?fromInput.value:'2026-09-01';
+    var seasonEnd='9999-12-31'; // no end limit
     var COLS=[
       {col:'players',label:'Ανδρικό'},{col:'players_efiviko',label:'Εφηβικό'},
       {col:'players_korasides',label:'Κορασίδες'},{col:'players_neanides',label:'Νεανίδες'},
@@ -423,11 +420,11 @@ async function loadNewRegistrations(){
       }catch(e){}
     }
     if(!results.length){
-      el.innerHTML='<p style="font-size:13px;color:#999">Δεν βρέθηκαν νέες εγγραφές για τη σεζόν '+seasonStart.slice(0,4)+'-'+seasonEnd.slice(0,4)+'.</p>';
+      el.innerHTML='<p style="font-size:13px;color:#999">Δεν βρέθηκαν εγγραφές από '+seasonStart.split('-').reverse().join('/')+'.</p>';
       return;
     }
     results.sort(function(a,b){return(b.created||'').localeCompare(a.created||'');});
-    el.innerHTML='<p style="font-size:12px;color:#666;margin-bottom:8px">Σεζόν '+seasonStart.slice(0,4)+'-'+seasonEnd.slice(0,4)+' · '+results.length+' εγγραφές</p>'
+    el.innerHTML='<p style="font-size:12px;color:#666;margin-bottom:8px">Από '+seasonStart.split('-').reverse().join('/')+' · '+results.length+' εγγραφές</p>'
       +results.map(function(p){
         var ini=(p.name||'??').slice(0,2).toUpperCase();
         return '<div class="result" style="border-color:#c3e6cb"><div class="av" style="background:#d4edda;color:#155724">'+ini+'</div>'
