@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🏀 2018 - 2019 - 2020</title>
+<title>🏀 2019 - 2020 - 2021 (2018)</title>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -321,11 +321,12 @@ var ALL_TEAM_COLLECTIONS=[
   {label:'Παιδικό', col:'paidiko_players'},
   {label:'Εφηβικό', col:'efiviko_players'},
   {label:'2016-2019', col:'akademies_players'},
-  {label:'2010-2011 Β', col:'ak_2010_2011_players'},
-  {label:'2012-2013 Α', col:'ak_2012_2013_a_players'},
-  {label:'2012-2013-2014', col:'ak_2012_2013_2014_players'},
+  
+  {label:'Παμπαίδες 2012-2013 (2011) U15', col:'ak_2012_2013_a_players'},
+  {label:'2013-2014 (2012) U14', col:'ak_2012_2013_2014_players'},
   {label:'2014-2015-2016', col:'ak_2014_2015_2016_players'},
-  {label:'2018-2019-2020', col:'ak_2018_2019_2020_players'},
+  {label:'2018-2019 (2017)', col:'ak_2018_2019_players'},
+  {label:'2019-2020-2021 (2018)', col:'ak_2018_2019_2020_players'},
   {label:'Κορίτσια Α', col:'ak_koritsia_a_players'},
   {label:'Κορίτσια Β', col:'ak_koritsia_b_players'},
 ];
@@ -503,7 +504,7 @@ window.delPlayer=async function(id){
       await setDoc(doc(db,'deleted_players',uid()),{
         name:p.name||'',num:p.num||'',pos:p.pos||'',birth:p.birth||'',
         phone:p.phone||'',notes:p.notes||'',
-        team:'2018-2019-2020',
+        team:'2019-2020-2021 (2018)',
         deletedAt:new Date().toISOString().slice(0,10)
       });
     }
@@ -963,7 +964,7 @@ window.exportTeam=async function(){
     var XLSX=window.XLSX;
     if(!XLSX){alert('Σφάλμα: XLSX δεν φορτώθηκε.');return;}
     var wb=XLSX.utils.book_new();
-    var teamName='2018-2019-2020';
+    var teamName='2019-2020-2021 (2018)';
 
     // 1. Roster
     var pSnap=await getDocs(collection(db,'ak_2018_2019_2020_players'));
