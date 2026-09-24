@@ -135,6 +135,7 @@ h2{font-size:13px;color:#666;font-weight:400;margin-bottom:20px}
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap">
       <input type="date" id="regFromDate" style="height:36px;border:1px solid #ccc;border-radius:6px;padding:0 8px;font-size:13px;flex:0 0 auto" value="2026-09-01">
       <button class="io-btn io-exp" onclick="loadNewRegistrations()" style="cursor:pointer;flex:0 0 auto;width:auto">📋 Εμφάνιση εγγραφών από αυτή την ημερομηνία</button>
+      <span id="newRegCount" style="background:#d4edda;color:#155724;border:1px solid #c3e6cb;border-radius:20px;padding:4px 12px;font-size:14px;font-weight:700;display:none"></span>
     </div>
     <div id="newRegList"></div>
   </div>
@@ -387,6 +388,8 @@ async function checkAlerts(){
 
 async function loadNewRegistrations(){
   var el=document.getElementById('newRegList');
+  var badge=document.getElementById('newRegCount');
+  if(badge)badge.style.display='none';
   el.innerHTML='<p style="font-size:13px;color:#999">Φόρτωση...</p>';
   try{
     // Current season: Sept 1 of current or previous year → June 30 of next year
@@ -419,6 +422,7 @@ async function loadNewRegistrations(){
         });
       }catch(e){}
     }
+    if(badge){badge.textContent=results.length+' εγγραφές';badge.style.display='inline-block';}
     if(!results.length){
       el.innerHTML='<p style="font-size:13px;color:#999">Δεν βρέθηκαν εγγραφές από '+seasonStart.split('-').reverse().join('/')+'.</p>';
       return;
@@ -433,15 +437,6 @@ async function loadNewRegistrations(){
           +'<span style="font-size:11px;padding:3px 8px;border-radius:4px;background:#d4edda;color:#155724;font-weight:600">'+p.team+'</span></div>';
       }).join('');
   }catch(e){el.innerHTML='<p style="font-size:13px;color:#c00">Σφάλμα: '+e.message+'</p>';}
-}
-
-async function loadDeletedCount(){
-  try{
-    var snap=await db.collection('deleted_players').get();
-    var cnt=snap.docs.length;
-    var badge=document.getElementById('deletedCount');
-    if(badge){badge.textContent=cnt+' διεγραμμένοι';badge.style.display=cnt>0?'inline-block':'none';}
-  }catch(e){}
 }
 
 async function loadDeletedPlayers(){
@@ -469,7 +464,7 @@ async function permDelete(idx){
   var id=_deletedIds[idx];
   if(!id)return;
   if(!confirm('Οριστική διαγραφή;'))return;
-  try{await db.collection('deleted_players').doc(id).delete();loadDeletedPlayers();loadDeletedCount();}
+  try{await db.collection('deleted_players').doc(id).delete();loadDeletedPlayers();}
   catch(e){alert('Σφάλμα: '+e.message);}
 }
 
@@ -584,7 +579,7 @@ function logout(){
   window.location.replace('login.html');
 }
 
-setTimeout(function(){countAllPlayers();loadTeamCounts();loadDeletedCount();},2000);
+setTimeout(function(){countAllPlayers();loadTeamCounts();},2000);
 </script>
 </body>
 </html>
