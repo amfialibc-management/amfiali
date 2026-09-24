@@ -119,6 +119,10 @@ input:focus,select:focus{outline:none;border-color:#1a3a6a}
           <input type="checkbox" id="perm_prokirikseis" style="width:16px;height:16px;margin:0">
           📋 Προκηρύξεις
         </label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">
+          <input type="checkbox" id="perm_newreg" style="width:16px;height:16px;margin:0">
+          🆕 Νέες Εγγραφές Σεζόν
+        </label>
       </div>
     </div>
     <div style="display:flex;gap:8px;margin-top:4px;align-items:center">
@@ -176,6 +180,7 @@ function clearForm(){
   document.getElementById('perm_export').checked=false;
   document.getElementById('perm_training').checked=false;
   document.getElementById('perm_prokirikseis').checked=false;
+  document.getElementById('perm_newreg').checked=false;
   toggleTeams();
   editId=null;
 }
@@ -197,6 +202,7 @@ async function saveUser(){
   if(document.getElementById('perm_export').checked)permissions.push('export');
   if(document.getElementById('perm_training').checked)permissions.push('training');
   if(document.getElementById('perm_prokirikseis').checked)permissions.push('prokirikseis');
+  if(document.getElementById('perm_newreg').checked)permissions.push('newreg');
   if(!email){showMsg('Βάλε email!',false);return;}
   try{
     if(editId){
@@ -257,6 +263,7 @@ window.editUser=async function(id){
   document.getElementById('perm_export').checked=(u.permissions||[]).indexOf('export')>=0;
   document.getElementById('perm_training').checked=(u.permissions||[]).indexOf('training')>=0;
   document.getElementById('perm_prokirikseis').checked=(u.permissions||[]).indexOf('prokirikseis')>=0;
+  document.getElementById('perm_newreg').checked=(u.permissions||[]).indexOf('newreg')>=0;
   document.getElementById('uEmail').scrollIntoView({behavior:'smooth'});
 };
 

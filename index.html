@@ -542,6 +542,8 @@ if(_userRole==='coach'||_userRole==='viewer'){
       if(_userPerms.indexOf('alerts')<0)el.style.display='none';
     }else if(txt.indexOf('Αρχείο Διεγραμμένων')>=0){
       if(_userPerms.indexOf('deleted')<0)el.style.display='none';
+    }else if(txt.indexOf('Νέες Εγγραφές')>=0){
+      if(_userPerms.indexOf('newreg')<0)el.style.display='none';
     }
   });
   // Schedule button
