@@ -108,6 +108,7 @@ h2{font-size:13px;color:#666;font-weight:400;margin-bottom:20px}
   <a href="akademies_koritsia_a.html" class="btn" style="background:#a81a6f;color:#fff">🏀 Κορίτσια Α <span id="count_ak_koritsia_a_players" style="font-size:11px;opacity:0.5;font-weight:400;margin-left:4px"></span></a>
   <a href="akademies_koritsia_b.html" class="btn" style="background:#d4006a;color:#fff">🏀 Κορίτσια Β <span id="count_ak_koritsia_b_players" style="font-size:11px;opacity:0.5;font-weight:400;margin-left:4px"></span></a>
 
+  <hr style="border:none;border-top:2px solid #e0e0e0;margin:14px 0 4px">
 
 </div><!-- /sidebar -->
 <div class="main-content">
@@ -115,6 +116,7 @@ h2{font-size:13px;color:#666;font-weight:400;margin-bottom:20px}
     <span style="font-size:13px;color:#aaa">Σύνολο εγγεγραμμένων αθλητών: </span>
     <span id="totalCount" style="font-size:13px;font-weight:700;color:#888">—</span>
   </div>
+  <hr id="hr1" style="display:none;border:none;border-top:2px solid #e0e0e0;margin:0">
   <div id="scheduleDiv" style="display:flex;gap:8px">
     <a href="schedule.html" class="sbtn" style="background:#8a3a0a;color:#fff;text-decoration:none">📅 Πρόγραμμα Αγώνων Εβδομάδας</a>
     <a href="training_schedule.html" class="sbtn" style="background:#0a5a4a;color:#fff;text-decoration:none">🏋️ Πρόγραμμα Προπονήσεων</a>
@@ -125,6 +127,7 @@ h2{font-size:13px;color:#666;font-weight:400;margin-bottom:20px}
   <div id="adminSection" style="display:none">
     <a href="admin_users.html" class="btn" style="background:#1a3a6a;color:#fff;justify-content:center;text-decoration:none;display:flex;align-items:center">👤 Διαχείριση Χρηστών</a>
   </div>
+  <hr style="border:none;border-top:2px solid #e0e0e0;margin:0">
   <div class="search-wrap">
     <div class="search-title">🔍 Αναζήτηση παίκτη</div>
     <div class="search-type">
@@ -547,10 +550,10 @@ if(_userRole==='admin'){
   var adminSec=document.getElementById('adminSection');
   if(adminSec)adminSec.style.display='block';
   var totalSec=document.getElementById('totalSection');
-  if(totalSec)totalSec.style.display='block';
+  if(totalSec){totalSec.style.display='block';var hr1=document.getElementById('hr1');if(hr1)hr1.style.display='block';}
 }else if(_userPerms.indexOf('total')>=0){
   var totalSec=document.getElementById('totalSection');
-  if(totalSec)totalSec.style.display='block';
+  if(totalSec){totalSec.style.display='block';var hr1=document.getElementById('hr1');if(hr1)hr1.style.display='block';}
 }
 
 if(_userRole==='coach'||_userRole==='viewer'){
