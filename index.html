@@ -43,6 +43,8 @@ h2{font-size:13px;color:#666;font-weight:400;margin-bottom:20px}
 .result-team{font-size:11px;padding:3px 8px;border-radius:4px;background:#e8f4fd;color:#1a6fa8;font-weight:600;margin-left:auto;white-space:nowrap;flex-shrink:0}
 .av{width:36px;height:36px;border-radius:50%;background:#e8f4fd;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#1a6fa8;flex-shrink:0}
 #scheduleDiv{display:flex;flex-direction:row;gap:8px}
+#totalSection{text-align:center!important;display:block!important}
+#totalSection span{display:inline!important}
 .sbtn{flex:1;min-width:0;display:block;padding:10px 6px;border-radius:10px;font-size:13px;font-weight:700;text-align:center;margin-bottom:0;transition:opacity .1s;box-sizing:border-box}
 .sbtn:hover{opacity:.9}
 /* Mobile defaults */
@@ -60,6 +62,7 @@ h2{font-size:13px;color:#666;font-weight:400;margin-bottom:20px}
   .sidebar-logo{display:block;text-align:center;padding-bottom:16px;margin-bottom:12px;border-bottom:2px solid #f0f0f0}
   .sidebar-logo img{width:72px;height:72px;object-fit:contain;margin-bottom:8px}
   .sidebar .section{font-size:11px;letter-spacing:1.5px;color:#aaa;margin:14px 0 6px}
+  .sidebar #totalSection{text-align:center!important}
   .sidebar .btn{padding:10px 14px;font-size:14px;border-radius:9px;margin-bottom:7px}
   #scheduleDiv .btn{flex:1!important;width:auto!important;min-width:0;margin-bottom:0;font-size:12px;text-align:center;padding:10px 6px}
   /* MAIN */
@@ -109,18 +112,6 @@ h2{font-size:13px;color:#666;font-weight:400;margin-bottom:20px}
     <a href="training_schedule.html" class="sbtn" style="background:#0a5a4a;color:#fff;text-decoration:none">🏋️ Πρόγραμμα Προπονήσεων</a>
   </div>
 
-  <div id="totalSection" style="text-align:center;margin-top:12px;padding-top:12px;border-top:1px solid #e0e0e0;display:none">
-    <span style="font-size:12px;color:#aaa">Σύνολο εγγεγραμμένων αθλητών: </span>
-    <span id="totalCount" style="font-size:12px;font-weight:700;color:#888">—</span>
-  </div>
-
-  <div id="prokSection" style="display:none;margin-top:0;padding-top:12px;border-top:2px solid #e0e0e0">
-    <a href="prokirikseis.html" class="btn" style="background:#5a1a6a;color:#fff;justify-content:center;text-decoration:none;display:flex;align-items:center">📋 Προκηρύξεις</a>
-  </div>
-
-  <div id="adminSection" style="display:none;margin-top:10px">
-    <a href="admin_users.html" class="btn" style="background:#1a3a6a;color:#fff;justify-content:center;text-decoration:none">👤 Διαχείριση Χρηστών</a>
-  </div>
 </div><!-- /sidebar -->
 <div class="main-content">
   <div class="search-wrap">
@@ -177,7 +168,20 @@ h2{font-size:13px;color:#666;font-weight:400;margin-bottom:20px}
     <div class="prog" id="prog" style="display:none"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
     <div class="io-status" id="iostatus"></div>
   </div>
-  <div style="margin-top:20px;padding-top:16px;border-top:1px solid #e0e0e0">
+  <div id="totalSection" style="display:none;text-align:center;padding:16px;background:#fff;border-radius:16px;box-shadow:0 1px 6px rgba(0,0,0,.07)">
+    <span style="font-size:13px;color:#aaa">Σύνολο εγγεγραμμένων αθλητών: </span>
+    <span id="totalCount" style="font-size:13px;font-weight:700;color:#888">—</span>
+  </div>
+
+  <div id="prokSection" style="display:none">
+    <a href="prokirikseis.html" class="btn" style="background:#5a1a6a;color:#fff;justify-content:center;text-decoration:none;display:flex;align-items:center">📋 Προκηρύξεις</a>
+  </div>
+
+  <div id="adminSection" style="display:none">
+    <a href="admin_users.html" class="btn" style="background:#1a3a6a;color:#fff;justify-content:center;text-decoration:none;display:flex;align-items:center">👤 Διαχείριση Χρηστών</a>
+  </div>
+
+  <div style="margin-top:0;padding-top:0">
     <button onclick="logout()" style="width:100%;height:42px;background:#f8d7da;color:#721c24;border:1px solid #f5c6cb;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer">🚪 Αποσύνδεση</button>
   </div>
 </div><!-- /main-content -->
