@@ -42,6 +42,8 @@ h2{font-size:13px;color:#666;font-weight:400;margin-bottom:20px}
 .result-info{font-size:12px;color:#666;margin-top:2px}
 .result-team{font-size:11px;padding:3px 8px;border-radius:4px;background:#e8f4fd;color:#1a6fa8;font-weight:600;margin-left:auto;white-space:nowrap;flex-shrink:0}
 .av{width:36px;height:36px;border-radius:50%;background:#e8f4fd;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#1a6fa8;flex-shrink:0}
+#scheduleDiv{display:flex;flex-direction:row;gap:8px}
+#scheduleDiv .btn{flex:1;min-width:0;width:auto;font-size:13px;text-align:center;padding:10px 6px;margin-bottom:0;justify-content:center}
 /* Mobile defaults */
 .desktop-header{display:block;text-align:center;margin-bottom:16px}
 .sidebar-logo{display:none}
@@ -58,8 +60,7 @@ h2{font-size:13px;color:#666;font-weight:400;margin-bottom:20px}
   .sidebar-logo img{width:72px;height:72px;object-fit:contain;margin-bottom:8px}
   .sidebar .section{font-size:11px;letter-spacing:1.5px;color:#aaa;margin:14px 0 6px}
   .sidebar .btn{padding:10px 14px;font-size:14px;border-radius:9px;margin-bottom:7px}
-  #scheduleDiv{background:#fff;border-radius:16px;padding:20px;box-shadow:0 1px 6px rgba(0,0,0,.07);display:flex!important;flex-direction:row!important;gap:12px}
-  #scheduleDiv .btn{flex:1!important;width:auto!important;min-width:0;margin-bottom:0;font-size:14px;text-align:center;justify-content:center}
+  #scheduleDiv .btn{flex:1!important;width:auto!important;min-width:0;margin-bottom:0;font-size:12px;text-align:center;padding:10px 6px}
   /* MAIN */
   .main-content{flex:1;min-width:0;display:flex;flex-direction:column;gap:16px}
   .main-content .search-wrap{margin-top:0;border-top:none;padding-top:0;background:#fff;border-radius:16px;padding:20px;box-shadow:0 1px 6px rgba(0,0,0,.07)}
@@ -102,6 +103,10 @@ h2{font-size:13px;color:#666;font-weight:400;margin-bottom:20px}
   <a href="akademies_koritsia_a.html" class="btn" style="background:#a81a6f;color:#fff">🏀 Κορίτσια Α <span id="count_ak_koritsia_a_players" style="font-size:11px;opacity:0.5;font-weight:400;margin-left:4px"></span></a>
   <a href="akademies_koritsia_b.html" class="btn" style="background:#d4006a;color:#fff">🏀 Κορίτσια Β <span id="count_ak_koritsia_b_players" style="font-size:11px;opacity:0.5;font-weight:400;margin-left:4px"></span></a>
 
+  <div id="scheduleDiv" style="margin-top:10px;display:flex;gap:8px">
+    <a href="schedule.html" class="btn" style="background:#8a3a0a;color:#fff;text-decoration:none;text-align:center;justify-content:center">📅 Πρόγραμμα Αγώνων Εβδομάδας</a>
+    <a href="training_schedule.html" class="btn" style="background:#0a5a4a;color:#fff;text-decoration:none;text-align:center;justify-content:center">🏋️ Πρόγραμμα Προπονήσεων</a>
+  </div>
 
   <div id="totalSection" style="text-align:center;margin-top:24px;padding-top:16px;border-top:1px solid #e0e0e0;display:none">
     <span style="font-size:12px;color:#aaa">Σύνολο εγγεγραμμένων αθλητών: </span>
@@ -117,10 +122,6 @@ h2{font-size:13px;color:#666;font-weight:400;margin-bottom:20px}
   </div>
 </div><!-- /sidebar -->
 <div class="main-content">
-  <div id="scheduleDiv" style="margin-top:0;display:flex;gap:12px">
-    <a href="schedule.html" class="btn" style="background:#8a3a0a;color:#fff;text-decoration:none;text-align:center;display:block;width:auto;flex:1">📅 Πρόγραμμα Αγώνων Εβδομάδας</a>
-    <a href="training_schedule.html" class="btn" style="background:#0a5a4a;color:#fff;text-decoration:none;text-align:center;display:block;width:auto;flex:1">🏋️ Πρόγραμμα Προπονήσεων</a>
-  </div>
   <div class="search-wrap">
     <div class="search-title">🔍 Αναζήτηση παίκτη</div>
     <div class="search-type">
