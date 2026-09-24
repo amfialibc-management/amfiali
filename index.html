@@ -42,18 +42,22 @@ h2{font-size:13px;color:#666;font-weight:400;margin-bottom:20px}
 .result-info{font-size:12px;color:#666;margin-top:2px}
 .result-team{font-size:11px;padding:3px 8px;border-radius:4px;background:#e8f4fd;color:#1a6fa8;font-weight:600;margin-left:auto;white-space:nowrap;flex-shrink:0}
 .av{width:36px;height:36px;border-radius:50%;background:#e8f4fd;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#1a6fa8;flex-shrink:0}
-.desktop-header{display:none}
-.sidebar,.main-content{width:100%}
+/* Mobile defaults */
+.desktop-header{display:block;text-align:center;margin-bottom:16px}
+.sidebar-logo{display:none}
+.sidebar{width:100%}
+.main-content{width:100%}
 /* Desktop layout */
 @media(min-width:768px){
-  .wrap{max-width:1100px;display:flex;flex-wrap:nowrap;align-items:flex-start;text-align:left;padding:32px 32px}
-  .desktop-header{width:100%;text-align:center;margin-bottom:24px;display:block}
-  .desktop-header img{margin-bottom:8px}
-  .sidebar img,.sidebar h1,.sidebar h2{display:none}
-  .sidebar{width:280px;flex-shrink:0;position:sticky;top:24px;background:#fff;border-radius:14px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,.08);align-self:flex-start}
-  .main-content{flex:1;min-width:0;padding-left:28px}
+  .wrap{max-width:1200px;display:flex;flex-wrap:nowrap;align-items:flex-start;text-align:left;padding:32px 32px;gap:28px}
+  /* Σε desktop το logo μπαίνει μέσα στο sidebar — κρύβουμε το standalone desktop-header */
+  .desktop-header{display:none}
+  .sidebar{width:300px;flex-shrink:0;position:sticky;top:24px;background:#fff;border-radius:14px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,.08);align-self:flex-start}
+  .sidebar-logo{display:block;text-align:center;padding-bottom:14px;margin-bottom:8px;border-bottom:1px solid #eee}
+  .sidebar-logo img{width:70px;height:70px;object-fit:contain;margin-bottom:6px}
+  .main-content{flex:1;min-width:0}
   .main-content .search-wrap{margin-top:0;border-top:none;padding-top:0}
-  .main-content .io-wrap:first-child{margin-top:0}
+  .main-content .io-wrap{margin-top:12px}
 }
 </style>
 <script>
@@ -73,6 +77,7 @@ h2{font-size:13px;color:#666;font-weight:400;margin-bottom:20px}
   <h2>Διαχείριση ομάδων μπάσκετ</h2>
 </div><!-- /desktop-header -->
 <div class="sidebar">
+  <div class="sidebar-logo"></div>
   <div class="section">Τμήματα</div>
   <a href="basketball_andriko.html" class="btn" style="background:#1a6fa8;color:#fff">🏀 Ανδρικό <span id="count_players" style="font-size:11px;opacity:0.5;font-weight:400;margin-left:4px"></span></a>
   <a href="basketball_efiviko.html" class="btn" style="background:#8a3a0a;color:#fff">🏀 Εφηβικό <span id="count_efiviko_players" style="font-size:11px;opacity:0.5;font-weight:400;margin-left:4px"></span></a>
@@ -598,6 +603,19 @@ function logout(){
 }
 
 setTimeout(function(){countAllPlayers();loadTeamCounts();},2000);
+// Copy logo into sidebar for desktop view
+(function(){
+  var dh=document.querySelector('.desktop-header');
+  var sl=document.querySelector('.sidebar-logo');
+  if(dh&&sl){
+    var img=dh.querySelector('img');
+    var h1=dh.querySelector('h1');
+    var h2=dh.querySelector('h2');
+    if(img)sl.appendChild(img.cloneNode(true));
+    if(h1){var t=document.createElement('div');t.style.cssText='font-size:15px;font-weight:700;color:#222;margin:6px 0 2px';t.textContent=h1.textContent;sl.appendChild(t);}
+    if(h2){var s=document.createElement('div');s.style.cssText='font-size:12px;color:#666';s.textContent=h2.textContent;sl.appendChild(s);}
+  }
+})();
 </script>
 </body>
 </html>
