@@ -43,7 +43,7 @@ h2{font-size:13px;color:#666;font-weight:400;margin-bottom:20px}
 .result-team{font-size:11px;padding:3px 8px;border-radius:4px;background:#e8f4fd;color:#1a6fa8;font-weight:600;margin-left:auto;white-space:nowrap;flex-shrink:0}
 .av{width:36px;height:36px;border-radius:50%;background:#e8f4fd;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#1a6fa8;flex-shrink:0}
 #scheduleDiv{display:flex;flex-direction:row;gap:8px}
-#totalSection{text-align:center!important;display:block!important}
+#totalSection{text-align:center!important}
 #totalSection span{display:inline!important}
 .sbtn{flex:1;min-width:0;display:block;padding:10px 6px;border-radius:10px;font-size:13px;font-weight:700;text-align:center;margin-bottom:0;transition:opacity .1s;box-sizing:border-box}
 .sbtn:hover{opacity:.9}
@@ -113,24 +113,37 @@ h2{font-size:13px;color:#666;font-weight:400;margin-bottom:20px}
 
 </div><!-- /sidebar -->
 <div class="main-content">
+
+  <!-- χωρισμα μετα τις ομαδες (μονο κινητο) -->
   <div class="main-divider"></div>
-  <div id="totalSection" style="display:none;text-align:center;background:#fff;border-radius:16px;padding:16px 20px;box-shadow:0 1px 6px rgba(0,0,0,.07)">
+
+  <!-- 1. Συνολο -->
+  <div id="totalSection" style="display:none;text-align:center;padding:12px 0">
     <span style="font-size:13px;color:#aaa">Σύνολο εγγεγραμμένων αθλητών: </span>
     <span id="totalCount" style="font-size:13px;font-weight:700;color:#888">—</span>
   </div>
-  <div id="hr1" style="display:none;border-top:2px solid #e0e0e0;margin:-8px 0"></div>
+
+  <!-- 2. Προγραμματα -->
   <div id="scheduleDiv" style="display:flex;gap:8px">
     <a href="schedule.html" class="sbtn" style="background:#8a3a0a;color:#fff;text-decoration:none">📅 Πρόγραμμα Αγώνων Εβδομάδας</a>
     <a href="training_schedule.html" class="sbtn" style="background:#0a5a4a;color:#fff;text-decoration:none">🏋️ Πρόγραμμα Προπονήσεων</a>
   </div>
+
+  <!-- 3. Προκηρυξεις (μονο admin) -->
   <div id="prokSection" style="display:none">
-    <div style="border-top:2px solid #e0e0e0;margin-bottom:16px"></div>
+    <div style="border-top:2px solid #e0e0e0;margin:4px 0 12px"></div>
     <a href="prokirikseis.html" class="btn" style="background:#5a1a6a;color:#fff;justify-content:center;text-decoration:none;display:flex;align-items:center">📋 Προκηρύξεις</a>
   </div>
+
+  <!-- 4. Διαχειριση (μονο admin) -->
   <div id="adminSection" style="display:none">
+    <div style="border-top:2px solid #e0e0e0;margin:4px 0 12px"></div>
     <a href="admin_users.html" class="btn" style="background:#1a3a6a;color:#fff;justify-content:center;text-decoration:none;display:flex;align-items:center">👤 Διαχείριση Χρηστών</a>
   </div>
-  <div style="border-top:2px solid #e0e0e0;margin:-8px 0"></div>
+
+  <!-- χωρισμα πριν αναζητηση -->
+  <div style="border-top:2px solid #e0e0e0"></div>
+
   <div class="search-wrap">
     <div class="search-title">🔍 Αναζήτηση παίκτη</div>
     <div class="search-type">
