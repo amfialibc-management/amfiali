@@ -175,6 +175,7 @@ h2{font-size:13px;color:#666;font-weight:400;margin-bottom:20px}
     <div class="io-title">🗃️ Αρχείο Διεγραμμένων Αθλητών/ιων</div>
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
       <button class="io-btn io-exp" onclick="loadDeletedPlayers()" style="cursor:pointer;flex:0 0 auto;width:auto">📋 Εμφάνιση αρχείου</button>
+      <button id="closeDeletedBtn" onclick="document.getElementById('deletedList').innerHTML='';document.getElementById('deletedCount').style.display='none';this.style.display='none';" style="display:none;cursor:pointer;flex:0 0 auto;width:auto;background:#f8d7da;color:#721c24;border:1px solid #f5c6cb;border-radius:8px;padding:6px 14px;font-size:13px;font-weight:600">✖ Κλείσιμο</button>
       <span id="deletedCount" style="background:#f8d7da;color:#721c24;border:1px solid #f5c6cb;border-radius:20px;padding:4px 12px;font-size:14px;font-weight:700;display:none"></span>
     </div>
     <div id="deletedList"></div>
@@ -185,6 +186,7 @@ h2{font-size:13px;color:#666;font-weight:400;margin-bottom:20px}
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap">
       <input type="date" id="regFromDate" style="height:36px;border:1px solid #ccc;border-radius:6px;padding:0 8px;font-size:13px;flex:0 0 auto" value="2026-09-01">
       <button class="io-btn io-exp" onclick="loadNewRegistrations()" style="cursor:pointer;flex:0 0 auto;width:auto">📋 Εμφάνιση εγγραφών από αυτή την ημερομηνία</button>
+      <button id="closeNewRegBtn" onclick="document.getElementById('newRegList').innerHTML='';document.getElementById('newRegCount').style.display='none';this.style.display='none';" style="display:none;cursor:pointer;flex:0 0 auto;width:auto;background:#f8d7da;color:#721c24;border:1px solid #f5c6cb;border-radius:8px;padding:6px 14px;font-size:13px;font-weight:600">✖ Κλείσιμο</button>
       <span id="newRegCount" style="background:#d4edda;color:#155724;border:1px solid #c3e6cb;border-radius:20px;padding:4px 12px;font-size:14px;font-weight:700;display:none"></span>
     </div>
     <div id="newRegList"></div>
@@ -473,6 +475,8 @@ async function loadNewRegistrations(){
       }catch(e){}
     }
     if(badge){badge.textContent=results.length+' εγγραφές';badge.style.display='inline-block';}
+    var closeBtn=document.getElementById('closeNewRegBtn');
+    if(closeBtn)closeBtn.style.display='inline-block';
     if(!results.length){
       el.innerHTML='<p style="font-size:13px;color:#999">Δεν βρέθηκαν εγγραφές από '+seasonStart.split('-').reverse().join('/')+'.</p>';
       return;
@@ -497,6 +501,8 @@ async function loadDeletedPlayers(){
     var docs=snap.docs.sort(function(a,b){return(b.data().deletedAt||'').localeCompare(a.data().deletedAt||'');});
     var badge=document.getElementById('deletedCount');
     if(badge){var cnt=docs.length;badge.textContent=cnt+' διεγραμμένοι';badge.style.display=cnt>0?'inline-block':'none';}
+    var closeBtn=document.getElementById('closeDeletedBtn');
+    if(closeBtn&&docs.length>0)closeBtn.style.display='inline-block';
     if(!docs.length){el.innerHTML='<p style="font-size:13px;color:#999">Δεν υπάρχουν διεγραμμένοι αθλητές.</p>';return;}
     _deletedIds=[];docs.forEach(function(d){_deletedIds.push(d.id);});
     el.innerHTML=docs.map(function(d,idx){
