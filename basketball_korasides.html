@@ -316,11 +316,14 @@ input:focus,select:focus{outline:none;border-color:#1a6fa8}
 
 <script type="module">
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import {getAuth,onAuthStateChanged} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import {getFirestore,collection,doc,onSnapshot,setDoc,deleteDoc,getDocs} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
 const cfg={apiKey:"AIzaSyCZZnZSz8zpChx-7ScaISKehoebtO1A-qY",authDomain:"amfiali-d773b.firebaseapp.com",projectId:"amfiali-d773b",storageBucket:"amfiali-d773b.firebasestorage.app",messagingSenderId:"972320918445",appId:"1:972320918445:web:e4674ddb6b790c07efaf24"};
 const app=initializeApp(cfg);
 const db=getFirestore(app);
+const auth=getAuth(app);
+onAuthStateChanged(auth,function(user){if(!user){window.location.href='login.html';}});
 
 const CP='korasides_players',CS='korasides_sessions',CA='korasides_attendance',CM='korasides_matches';
 const CA_NEA='korasides_neanides_attendance';
