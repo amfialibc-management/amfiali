@@ -144,11 +144,12 @@ firebase.initializeApp(firebaseConfig);
 var db=firebase.firestore();
 var auth=firebase.auth();
 
-// Auth check
-var today=new Date().toDateString();
-if(localStorage.getItem('amfiali_last_login')!==today){window.location.replace('login.html');}
+// Auth check - Firebase Auth
 var role=localStorage.getItem('amfiali_role')||'admin';
 if(role!=='admin'){window.location.replace('index.html');}
+auth.onAuthStateChanged(function(user){
+  if(!user){window.location.replace('login.html');}
+});
 
 var editId=null;
 
