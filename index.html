@@ -6,6 +6,7 @@
 <title>🏀 Α.Π.Σ.Ε. Αμφιάλης 1967</title>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -214,11 +215,15 @@ var firebaseConfig={apiKey:"AIzaSyCZZnZSz8zpChx-7ScaISKehoebtO1A-qY",authDomain:
 firebase.initializeApp(firebaseConfig);
 var db=firebase.firestore();
 
-// Refresh permissions from Firestore on each load
+// Auth guard + refresh permissions from Firestore on each load
 (async function(){
   try{
-    var auth2=firebase.auth();
     firebase.auth().onAuthStateChanged(async function(user){
+      if(!user){
+        // Not logged in → redirect to login
+        window.location.href='login.html';
+        return;
+      }
       if(user&&_userRole!=='admin'){
         var snap=await db.collection('user_roles').where('email','==',user.email).get();
         if(!snap.empty){
