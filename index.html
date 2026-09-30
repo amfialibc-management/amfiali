@@ -43,10 +43,10 @@ h2{font-size:13px;color:#666;font-weight:400;margin-bottom:20px}
 .result-info{font-size:12px;color:#666;margin-top:2px}
 .result-team{font-size:11px;padding:3px 8px;border-radius:4px;background:#e8f4fd;color:#1a6fa8;font-weight:600;margin-left:auto;white-space:nowrap;flex-shrink:0}
 .av{width:36px;height:36px;border-radius:50%;background:#e8f4fd;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#1a6fa8;flex-shrink:0}
-#scheduleDiv{display:flex;flex-direction:row;gap:8px}
-#totalSection{text-align:center!important}
+#scheduleDiv{display:flex;flex-direction:row;gap:8px;align-items:stretch}
+#totalSection{text-align:left}
 #totalSection span{display:inline!important}
-.sbtn{flex:1;min-width:0;display:block;padding:10px 6px;border-radius:10px;font-size:13px;font-weight:700;text-align:center;margin-bottom:0;transition:opacity .1s;box-sizing:border-box}
+.sbtn{flex:1;min-width:0;display:flex;align-items:center;justify-content:center;padding:10px 6px;border-radius:10px;font-size:13px;font-weight:700;text-align:center;margin-bottom:0;transition:opacity .1s;box-sizing:border-box}
 .sbtn:hover{opacity:.9}
 /* Mobile defaults */
 .desktop-header{display:block;text-align:center;margin-bottom:16px}
@@ -54,7 +54,7 @@ h2{font-size:13px;color:#666;font-weight:400;margin-bottom:20px}
 .sidebar{width:100%}
 .main-content{width:100%;display:flex;flex-direction:column;gap:12px}
 .main-divider{border-top:2px solid #e0e0e0}
-#totalSection{border-bottom:2px solid #e0e0e0;padding-bottom:12px}
+#totalSection{border-bottom:2px solid #e0e0e0;padding-bottom:12px;text-align:center}
 #scheduleDiv{border-bottom:2px solid #e0e0e0;padding-bottom:12px}
 #prokSection{border-bottom:2px solid #e0e0e0;padding-bottom:12px}
 #adminSection{border-bottom:2px solid #e0e0e0;padding-bottom:12px}
@@ -64,7 +64,7 @@ h2{font-size:13px;color:#666;font-weight:400;margin-bottom:20px}
   .wrap{max-width:1280px;display:flex;flex-wrap:nowrap;align-items:flex-start;text-align:left;padding:28px 28px;gap:24px}
   .desktop-header{display:none}
   /* SIDEBAR */
-  .sidebar{width:50%;flex-shrink:0;position:sticky;top:24px;background:#fff;border-radius:16px;padding:24px 20px;box-shadow:0 2px 12px rgba(0,0,0,.1);align-self:flex-start;max-height:calc(100vh - 48px);overflow-y:auto}
+  .sidebar{width:50%;flex-shrink:0;position:sticky;top:24px;background:#fff;border-radius:16px;padding:24px 20px;box-shadow:0 2px 12px rgba(0,0,0,.1);align-self:flex-start;max-height:calc(100vh - 48px);overflow-y:auto;display:flex;flex-direction:column}
   .sidebar-logo{display:block;text-align:center;padding-bottom:16px;margin-bottom:12px;border-bottom:2px solid #f0f0f0}
   .sidebar-logo img{width:72px;height:72px;object-fit:contain;margin-bottom:8px}
   .sidebar .section{font-size:11px;letter-spacing:1.5px;color:#aaa;margin:14px 0 6px}
@@ -72,7 +72,7 @@ h2{font-size:13px;color:#666;font-weight:400;margin-bottom:20px}
   /* MAIN */
   .main-divider{display:none}
   .main-content{flex:1;min-width:0;display:flex;flex-direction:column;gap:16px}
-  #totalSection{border-bottom:none;padding-bottom:0}
+  #totalSection{border-bottom:none;padding-bottom:0;margin-top:auto;padding-top:12px;border-top:1px solid #f0f0f0}
   #scheduleDiv{border-bottom:none;padding-bottom:0}
   #prokSection{border-bottom:none;padding-bottom:0}
   #adminSection{border-bottom:none;padding-bottom:0}
@@ -116,6 +116,11 @@ h2{font-size:13px;color:#666;font-weight:400;margin-bottom:20px}
   <a href="akademies_koritsia_a.html" class="btn" style="background:#a81a6f;color:#fff">🏀 Κορίτσια Α <span id="count_ak_koritsia_a_players" style="font-size:11px;opacity:0.5;font-weight:400;margin-left:4px"></span></a>
   <a href="akademies_koritsia_b.html" class="btn" style="background:#d4006a;color:#fff">🏀 Κορίτσια Β <span id="count_ak_koritsia_b_players" style="font-size:11px;opacity:0.5;font-weight:400;margin-left:4px"></span></a>
 
+  <!-- Συνολο εγγεγραμμένων - κατω αριστερα (desktop) -->
+  <div id="totalSection" style="display:none">
+    <span style="font-size:12px;color:#aaa">Σύνολο εγγεγραμμένων αθλητών: </span>
+    <span id="totalCount" style="font-size:12px;font-weight:700;color:#888">—</span>
+  </div>
 
 </div><!-- /sidebar -->
 <div class="main-content">
@@ -123,11 +128,6 @@ h2{font-size:13px;color:#666;font-weight:400;margin-bottom:20px}
   <!-- χωρισμα μετα τις ομαδες (μονο κινητο) -->
   <div class="main-divider"></div>
 
-  <!-- 1. Συνολο -->
-  <div id="totalSection" style="display:none;text-align:center;padding:12px 0">
-    <span style="font-size:13px;color:#aaa">Σύνολο εγγεγραμμένων αθλητών: </span>
-    <span id="totalCount" style="font-size:13px;font-weight:700;color:#888">—</span>
-  </div>
 
   <!-- 2. Προγραμματα -->
   <div id="scheduleDiv" style="display:flex;gap:8px">
