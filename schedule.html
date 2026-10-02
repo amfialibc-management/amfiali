@@ -11,7 +11,7 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:system-ui,sans-serif;background:#f5f5f5;min-height:100vh}
 .wrap{max-width:600px;margin:0 auto;padding:20px 16px}
-.header{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.header{display:flex;align-items:center;gap:12px;margin-bottom:10px}
 .header img{width:44px;height:44px;object-fit:contain}
 .header h1{font-size:18px;font-weight:700;color:#1a3a6a;flex:1}
 .header a{font-size:13px;color:#666;text-decoration:none;padding:6px 12px;border:1px solid #ccc;border-radius:6px}
@@ -148,38 +148,30 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#1a3a6a}
   </div>
 
   <!-- Filters -->
-  <div class="card">
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
-      <div class="field">
-        <div class="lbl">Ημέρα</div>
-        <select onchange="setFilterDrop('day',this.value)" style="height:38px;border:1px solid #ddd;border-radius:8px;padding:0 10px;font-size:13px;width:100%">
-          <option value="all">Όλες</option>
-          <option value="Σάββατο">Σάββατο</option>
-          <option value="Κυριακή">Κυριακή</option>
-          <option value="Δευτέρα">Δευτέρα</option>
-          <option value="Τρίτη">Τρίτη</option>
-          <option value="Τετάρτη">Τετάρτη</option>
-          <option value="Πέμπτη">Πέμπτη</option>
-          <option value="Παρασκευή">Παρασκευή</option>
-        </select>
-      </div>
-      <div class="field">
-        <div class="lbl">Είδος</div>
-        <select onchange="setFilterDrop('type',this.value)" style="height:38px;border:1px solid #ddd;border-radius:8px;padding:0 10px;font-size:13px;width:100%">
-          <option value="all">Όλα</option>
-          <option value="ΕΣΚΑΝΑ">ΕΣΚΑΝΑ</option>
-          <option value="ΦΕΑ">ΦΕΑ</option>
-          <option value="Φιλικό">Φιλικό</option>
-        </select>
-      </div>
-      <div class="field">
-        <div class="lbl">Σιταποθήκες</div>
-        <select onchange="setFilterDrop('venue',this.value)" style="height:38px;border:1px solid #ddd;border-radius:8px;padding:0 10px;font-size:13px;width:100%">
-          <option value="all">Όλα</option>
-          <option value="Ανοιχτό Σιταποθηκών">Ανοιχτό</option>
-          <option value="Κλειστό Σιταποθηκών">Κλειστό</option>
-        </select>
-      </div>
+  <div style="background:#fff;border-radius:12px;padding:10px 12px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.08)">
+    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:6px">
+      <span style="font-size:10px;font-weight:700;color:#aaa;min-width:44px">ΗΜΕΡΑ</span>
+      <button class="filter-btn active" onclick="setFilterChip('day','all',this)">Όλες</button>
+      <button class="filter-btn" onclick="setFilterChip('day','Σάββατο',this)">Σάββ</button>
+      <button class="filter-btn" onclick="setFilterChip('day','Κυριακή',this)">Κυρ</button>
+      <button class="filter-btn" onclick="setFilterChip('day','Δευτέρα',this)">Δευτ</button>
+      <button class="filter-btn" onclick="setFilterChip('day','Τρίτη',this)">Τρίτ</button>
+      <button class="filter-btn" onclick="setFilterChip('day','Τετάρτη',this)">Τετ</button>
+      <button class="filter-btn" onclick="setFilterChip('day','Πέμπτη',this)">Πέμπ</button>
+      <button class="filter-btn" onclick="setFilterChip('day','Παρασκευή',this)">Παρ</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:6px">
+      <span style="font-size:10px;font-weight:700;color:#aaa;min-width:44px">ΕΙΔΟΣ</span>
+      <button class="filter-btn active" onclick="setFilterChip('type','all',this)">Όλα</button>
+      <button class="filter-btn" onclick="setFilterChip('type','ΕΣΚΑΝΑ',this)">ΕΣΚΑΝΑ</button>
+      <button class="filter-btn" onclick="setFilterChip('type','ΦΕΑ',this)">ΦΕΑ</button>
+      <button class="filter-btn" onclick="setFilterChip('type','Φιλικό',this)">Φιλικό</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+      <span style="font-size:10px;font-weight:700;color:#aaa;min-width:44px">ΓΗΠΕΔΟ</span>
+      <button class="filter-btn active" onclick="setFilterChip('venue','all',this)">Όλα</button>
+      <button class="filter-btn" onclick="setFilterChip('venue','Ανοιχτό Σιταποθηκών',this)">Ανοιχτό</button>
+      <button class="filter-btn" onclick="setFilterChip('venue','Κλειστό Σιταποθηκών',this)">Κλειστό</button>
     </div>
   </div>
 
@@ -264,6 +256,13 @@ function setFilter(type,val,btn){
 
 function setFilterDrop(type,val){
   filters[type]=val;
+  renderMatches();
+}
+function setFilterChip(type,val,btn){
+  filters[type]=val;
+  var parent=btn.parentElement;
+  parent.querySelectorAll('.filter-btn').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
   renderMatches();
 }
 
