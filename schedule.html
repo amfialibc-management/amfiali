@@ -43,8 +43,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#1a3a6a}
   #matchesList{gap:14px!important;grid-template-columns:1fr 1fr!important}
 }
 @media(min-width:700px){
-  #matchesList{grid-template-columns:1fr!important}
-  .match-card{height:auto!important;min-height:100px}
+  #matchesList{grid-template-columns:1fr 1fr!important}
 }
 .match-actions{display:flex;gap:6px;margin-top:10px}
 .tag-eskanа{background:#e8f4fd;color:#1a6fa8;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600}
@@ -163,12 +162,13 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#1a3a6a}
   <div style="background:#fff;border-radius:12px;padding:10px 12px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.08)">
     <div style="display:flex;align-items:flex-start;gap:6px;margin-bottom:6px">
       <span style="font-size:10px;font-weight:700;color:#aaa;min-width:44px;padding-top:4px">ΗΜΕΡΑ</span>
-      <div style="display:grid;grid-template-columns:repeat(4,auto);gap:4px">
+      <div style="display:grid;grid-template-columns:repeat(5,auto);gap:4px">
         <button class="filter-btn active" onclick="setFilterChip('day','all',this)">Όλες</button>
         <button class="filter-btn" onclick="setFilterChip('day','Σάββατο',this)">Σαβ</button>
         <button class="filter-btn" onclick="setFilterChip('day','Κυριακή',this)">Κυρ</button>
         <button class="filter-btn" onclick="setFilterChip('day','Δευτέρα',this)">Δευτ</button>
         <button class="filter-btn" onclick="setFilterChip('day','Τρίτη',this)">Τρίτ</button>
+        <div></div>
         <button class="filter-btn" onclick="setFilterChip('day','Τετάρτη',this)">Τετ</button>
         <button class="filter-btn" onclick="setFilterChip('day','Πέμπτη',this)">Πέμπ</button>
         <button class="filter-btn" onclick="setFilterChip('day','Παρασκευή',this)">Παρ</button>
