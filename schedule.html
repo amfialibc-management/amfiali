@@ -34,6 +34,14 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#1a3a6a}
 .match-title{font-size:10px;font-weight:700;color:#222;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .match-info{font-size:11px;color:#444;margin-bottom:2px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .match-loc{font-size:10px;color:#555;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media(min-width:480px){
+  .match-card{height:150px;padding:10px 12px}
+  .match-day{font-size:12px}
+  .match-title{font-size:13px;margin-bottom:4px}
+  .match-info{font-size:13px;margin-bottom:3px}
+  .match-loc{font-size:12px}
+  #matchesList{gap:12px!important}
+}
 .match-actions{display:flex;gap:6px;margin-top:10px}
 .tag-eskanа{background:#e8f4fd;color:#1a6fa8;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600}
 .tag-fea{background:#EAF3DE;color:#3B6D11;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600}
@@ -152,10 +160,13 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#1a3a6a}
     <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:6px">
       <span style="font-size:10px;font-weight:700;color:#aaa;min-width:44px">ΗΜΕΡΑ</span>
       <button class="filter-btn active" onclick="setFilterChip('day','all',this)">Όλες</button>
-      <button class="filter-btn" onclick="setFilterChip('day','Σάββατο',this)">Σάββ</button>
+      <button class="filter-btn" onclick="setFilterChip('day','Σάββατο',this)">Σαβ</button>
       <button class="filter-btn" onclick="setFilterChip('day','Κυριακή',this)">Κυρ</button>
       <button class="filter-btn" onclick="setFilterChip('day','Δευτέρα',this)">Δευτ</button>
       <button class="filter-btn" onclick="setFilterChip('day','Τρίτη',this)">Τρίτ</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:6px">
+      <span style="font-size:10px;font-weight:700;color:#aaa;min-width:44px"></span>
       <button class="filter-btn" onclick="setFilterChip('day','Τετάρτη',this)">Τετ</button>
       <button class="filter-btn" onclick="setFilterChip('day','Πέμπτη',this)">Πέμπ</button>
       <button class="filter-btn" onclick="setFilterChip('day','Παρασκευή',this)">Παρ</button>
@@ -291,11 +302,12 @@ function renderMatches(){
        +'<button style="font-size:10px;height:20px;padding:0 6px;border-radius:4px;border:1px solid #f5c6cb;background:#f8d7da;color:#721c24;cursor:pointer" data-id="'+m.id+'" onclick="delMatch(this.dataset.id)">Διαγρ</button>'
        +'<button style="font-size:10px;height:20px;padding:0 6px;border-radius:4px;border:1px solid #d4a500;background:#fff8e1;color:#856404;cursor:pointer" data-id="'+m.id+'" onclick="cancelMatch(this.dataset.id)">Ακυρ</button>'
       :'';
+    var big=window.innerWidth>=480;
     return '<div class="match-card">'
       +'<div style="margin-bottom:3px">'
-       +'<span style="font-size:11px;font-weight:800;color:'+(m.day==='Κυριακή'?'#e67e22':m.day==='Σάββατο'?'#3498db':'#27ae60')+'">'+( m.day||'')+'</span>'
-       +(m.date?' <span style="font-size:10px;color:#222;font-weight:600"> '+new Date(m.date+'T00:00:00').toLocaleDateString('el-GR',{day:'2-digit',month:'2-digit',year:'numeric'})+'</span>':'')
-       +(m.time?' <span style="font-size:11px;font-weight:800;color:#1a3a6a"> '+m.time+'</span>':'')
+       +'<span style="font-size:'+(big?'14':'11')+'px;font-weight:800;color:'+(m.day==='Κυριακή'?'#e67e22':m.day==='Σάββατο'?'#3498db':'#27ae60')+'">'+( m.day||'')+'</span>'
+       +(m.date?' <span style="font-size:'+(big?'12':'10')+'px;color:#222;font-weight:600"> '+new Date(m.date+'T00:00:00').toLocaleDateString('el-GR',{day:'2-digit',month:'2-digit',year:'numeric'})+'</span>':'')
+       +(m.time?' <span style="font-size:'+(big?'14':'11')+'px;font-weight:800;color:#1a3a6a"> '+m.time+'</span>':'')
        +'</div>'
       +'<div class="match-title"><span style="color:#0000ff;font-weight:800">'+m.category+'</span> <span class="'+tagCls+'" style="font-size:10px;padding:2px 6px">'+m.type+'</span></div>'
       +(m.opponent?'<div class="match-info">vs '+m.opponent+'</div>':'')
