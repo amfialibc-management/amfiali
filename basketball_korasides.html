@@ -50,14 +50,14 @@ input:focus,select:focus{outline:none;border-color:#1a6fa8}
 .pbar{height:6px;border-radius:3px;background:#eee;margin-top:5px}
 .pfill{height:100%;border-radius:3px;background:#1D9E75}
 .err{font-size:12px;color:#c00;margin-top:6px;display:none}
-.ok{font-size:13px;color:#3B6D11;margin-top:6px;display:none;text-align:right;font-weight:500}
+.ok{font-size:13px;color:#3B6D11;display:none;font-weight:500;align-self:center;margin-right:8px}
 .empty{text-align:center;padding:2.5rem;color:#999;font-size:14px}
 .xbar{display:flex;gap:8px;justify-content:flex-end;margin-bottom:12px;flex-wrap:wrap}
 .epanel{background:#fff8e1;border:1px solid #ffc107;border-radius:10px;padding:14px;margin-bottom:14px;display:none}
 
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1a7a3f;color:#fff;padding:12px 28px;border-radius:10px;font-size:15px;font-weight:600;box-shadow:0 4px 16px rgba(0,0,0,.2);z-index:9998;display:none;animation:fadeIn .2s ease}
 @keyframes fadeIn{from{opacity:0;transform:translateX(-50%) translateY(10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
-.viewer-mode .editbtn,.viewer-mode .delbtn,.viewer-mode .btn-green,.viewer-mode .btn-blue:not(.btn-filter){display:none!important}
+.viewer-mode .editbtn,.viewer-mode .delbtn,.viewer-mode .btn-green,.viewer-mode .btn-edit{display:none!important}
 .viewer-mode #attact,.viewer-mode #mattact{display:none!important}
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -111,7 +111,7 @@ input:focus,select:focus{outline:none;border-color:#1a6fa8}
   </div>
   <div class="xbar">
     <button class="btn btn-green" onclick="exportRoster()">📥 Εξαγωγή ρόστερ</button>
-    <button class="btn btn-blue" onclick="toggleAddForm()" id="toggleAddBtn">+ Προσθήκη</button>
+    <button id="toggleAddBtn" class="btn btn-blue btn-edit" onclick="toggleAddForm()">+ Προσθήκη</button>
   </div>
   <div class="card" id="addPlayerForm" style="display:none">
     <p class="sec-title">Προσθήκη</p>
@@ -122,7 +122,7 @@ input:focus,select:focus{outline:none;border-color:#1a6fa8}
     </div>
     <div class="g2 mb"><div><div class="lbl">Χρονολογία Γέννησης</div><select id="pbirth"><option value="">— Επίλεξε —</option></select></div><div><div class="lbl">Τηλέφωνο επικοινωνίας</div><input id="pphone" type="tel" placeholder="π.χ. 6912345678"></div></div>
     <div class="mb"><div class="lbl">Σημειώσεις</div><input id="pnotes" placeholder="π.χ. Αδερφός του Παπαδόπουλου"></div>
-    <div style="text-align:right"><button class="btn btn-blue" onclick="addPlayer()">+ Προσθήκη</button></div>
+    <div style="text-align:right"><button class="btn btn-blue btn-edit" onclick="addPlayer()">+ Προσθήκη</button></div>
     <p class="err" id="perr">Συμπλήρωσε όνομα.</p>
   </div>
   <div class="epanel" id="pedit">
@@ -134,7 +134,7 @@ input:focus,select:focus{outline:none;border-color:#1a6fa8}
     </div>
     <div class="g2 mb"><div><div class="lbl">Χρονολογία Γέννησης</div><select id="epbirth"><option value="">— Επίλεξε —</option></select></div><div><div class="lbl">Τηλέφωνο επικοινωνίας</div><input id="epphone" type="tel" placeholder="π.χ. 6912345678"></div></div>
     <div class="mb"><div class="lbl">Σημειώσεις</div><input id="epnotes" placeholder="π.χ. Αδερφός του Παπαδόπουλου"></div>
-    <div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn" onclick="cancelEditPlayer()">Ακύρωση</button><button class="btn btn-blue" onclick="saveEditPlayer()">💾 Αποθήκευση</button></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn" onclick="cancelEditPlayer()">Ακύρωση</button><button class="btn btn-blue btn-edit" onclick="saveEditPlayer()">💾 Αποθήκευση</button></div>
     <hr style="margin:14px 0;border:none;border-top:1px solid #f0d080">
     <div style="margin-bottom:8px">
       <div class="lbl">↔️ Μεταφορά / Αντιγραφή σε άλλο τμήμα</div>
@@ -169,7 +169,7 @@ input:focus,select:focus{outline:none;border-color:#1a6fa8}
       </div>
     </div>
     <div class="mb"><div class="lbl">Σημειώσεις</div><input id="snotes" placeholder="π.χ. Γυμναστήριο Β"></div>
-    <div style="text-align:right"><button class="btn btn-blue" onclick="addSession()">+ Προσθήκη</button></div>
+    <div style="text-align:right"><button class="btn btn-blue btn-edit" onclick="addSession()">+ Προσθήκη</button></div>
     <p class="err" id="serr">Συμπλήρωσε θέμα.</p>
   </div>
   <div class="epanel" id="sedit">
@@ -187,7 +187,7 @@ input:focus,select:focus{outline:none;border-color:#1a6fa8}
       </div>
     </div>
     <div class="mb"><div class="lbl">Σημειώσεις</div><input id="enotes"></div>
-    <div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn" onclick="cancelEditSess()">Ακύρωση</button><button class="btn btn-blue" onclick="saveEditSess()">💾 Αποθήκευση</button></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn" onclick="cancelEditSess()">Ακύρωση</button><button class="btn btn-blue btn-edit" onclick="saveEditSess()">💾 Αποθήκευση</button></div>
   </div>
   <div id="slist"><p class="empty">Δεν έχεις καταχωρήσεις ακόμα.</p></div>
 </div>
@@ -212,9 +212,9 @@ input:focus,select:focus{outline:none;border-color:#1a6fa8}
   <div id="attact" style="display:none;gap:8px;justify-content:flex-end;margin-top:12px;flex-wrap:wrap">
     <button class="btn" onclick="window.markAll('p')">Όλοι παρόντες</button>
     <button class="btn" onclick="window.markAll('a')">Όλοι απόντες</button>
-    <button class="btn btn-blue" id="savebtn" onclick="saveAtt()" disabled>💾 Αποθήκευση</button>
+      <p class="ok" id="attok">✓ Αποθηκεύτηκε!</p>
+<button class="btn btn-blue btn-edit" id="savebtn" onclick="saveAtt()" disabled>💾 Αποθήκευση</button>
   </div>
-  <p class="ok" id="attok">✓ Αποθηκεύτηκε!</p>
 </div>
 
 <div class="sec" id="sec3">
@@ -270,9 +270,9 @@ input:focus,select:focus{outline:none;border-color:#1a6fa8}
   <div id="mattact" style="display:none;gap:8px;justify-content:flex-end;margin-top:12px;flex-wrap:wrap">
     <button class="btn" onclick="markAllMatch('p')">Όλοι παρόντες</button>
     <button class="btn" onclick="markAllMatch('a')">Όλοι απόντες</button>
-    <button class="btn btn-blue" id="msavebtn" onclick="saveMatchAtt()" disabled>💾 Αποθήκευση</button>
+      <p class="ok" id="mattok">✓ Αποθηκεύτηκε!</p>
+<button class="btn btn-blue btn-edit" id="msavebtn" onclick="saveMatchAtt()" disabled>💾 Αποθήκευση</button>
   </div>
-  <p class="ok" id="mattok">✓ Αποθηκεύτηκε!</p>
   <div id="mhistory"></div>
 </div>
 
