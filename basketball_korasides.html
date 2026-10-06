@@ -63,6 +63,8 @@ input:focus,select:focus{outline:none;border-color:#1a6fa8}
 @keyframes fadeIn{from{opacity:0;transform:translateX(-50%) translateY(10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
 .viewer-mode .editbtn,.viewer-mode .delbtn,.viewer-mode .btn-green,.viewer-mode .btn-edit{display:none!important}
 .viewer-mode #attact,.viewer-mode #mattact{display:none!important}
+.home-btn{font-size:12px;padding:6px 12px;border:none;border-radius:6px;cursor:pointer;background:#1a3a6a;color:#fff;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
+.home-btn:hover{background:#122a50}
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
@@ -91,7 +93,7 @@ input:focus,select:focus{outline:none;border-color:#1a6fa8}
 </head>
 <body>
 <div id="toast"></div>
-<nav>
+<nav><a href="index.html" class="home-btn" style="margin:4px 4px 4px 6px">🏠 Αρχική</a>
   <button class="tab active" onclick="go(2)">✅ Παρουσιολόγιο<br><small>Προπονήσεων</small></button>
   <button class="tab" onclick="go(5)">🏀 Παρουσίες<br><small>Νεανίδων</small></button>
   <button class="tab" onclick="go(4)">🏆 Παρουσιολόγιο<br><small>Αγώνων</small></button>
