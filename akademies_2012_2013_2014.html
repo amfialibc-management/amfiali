@@ -1054,9 +1054,12 @@ window._renderHistTrainBlock=function(){
   var chipsHtml=window._renderHistChips('_histTrainChipsWrap',months,cur,'window._setHistTrainMonth')||'';
   var rows=sessions.map(function(s){
     var attCount=Object.values(s.att||{}).filter(function(v){return v==='p';}).length;
+    var idx=attSessions.indexOf(s);
     return '<div class="prow"><div style="flex:1"><div style="font-size:13px;font-weight:600">'+s.topic+'</div>'
       +'<div style="font-size:11px;color:#999">'+fmtDate(s.date)+(s.snotes?' · '+s.snotes:'')+'</div></div>'
-      +'<span class="tag tg">'+attCount+'/'+players.length+'</span></div>';
+      +'<div class="ml" style="display:flex;align-items:center;gap:6px"><span class="tag tg">'+attCount+'/'+players.length+'</span>'
+      +'<button class="editbtn" onclick="window.startEditAtt('+idx+')">✏️</button>'
+      +'<button class="delbtn" onclick="window.delAtt(\''+s.id+'\')"  >🗑️</button></div></div>';
   }).join('');
   wrap.innerHTML='<div id="_histTrainChipsWrap"></div>'+(rows||'<p class="empty" style="margin:8px 0">Δεν υπάρχουν προπονήσεις.</p>');
   // now render chips inside
@@ -1079,9 +1082,12 @@ window._renderHistMatchBlock=function(){
   var rows=sessions.map(function(s){
     var attCount=Object.values(s.att||{}).filter(function(v){return v==='p';}).length;
     var kindLbl=s.mkind==='friendly'?'Φιλικός':s.mkind==='championship'?'Πρωτάθλημα':s.mkind==='cup'?'Κύπελλο':(s.mkind||'');
+    var idx=matchSessions.indexOf(s);
     return '<div class="prow"><div style="flex:1"><div style="font-size:13px;font-weight:600">'+(s.opponent?'εναντίον '+s.opponent:'Αγώνας')+'</div>'
       +'<div style="font-size:11px;color:#999">'+fmtDate(s.date)+(kindLbl?' · '+kindLbl:'')+(s.result?' · '+s.result:'')+'</div></div>'
-      +'<span class="tag tg">'+attCount+'/'+players.length+'</span></div>';
+      +'<div class="ml" style="display:flex;align-items:center;gap:6px"><span class="tag tg">'+attCount+'/'+players.length+'</span>'
+      +'<button class="editbtn" onclick="window.editMatchAtt('+idx+')">✏️</button>'
+      +'<button class="delbtn" onclick="window.delMatchAtt(\''+s.id+'\')"  >🗑️</button></div></div>';
   }).join('');
   wrap.innerHTML='<div id="_histMatchChipsWrap"></div>'+(rows||'<p class="empty" style="margin:8px 0">Δεν υπάρχουν αγώνες.</p>');
   var chipsContainer=document.getElementById('_histMatchChipsWrap');
