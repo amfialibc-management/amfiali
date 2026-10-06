@@ -34,6 +34,10 @@ input:focus,select:focus{outline:none;border-color:#1a6fa8}
 .btn-blue:hover{background:#8e1560}
 .btn-green{background:#EAF3DE;color:#3B6D11;border:1px solid #3B6D11;font-weight:600}
 .btn-yellow{background:#fff8e1;color:#856404;border:1px solid #ffc107;font-weight:600}
+.filter-btn{font-size:12px;padding:0 10px;height:28px;border:1px solid #ccc;border-radius:14px;cursor:pointer;background:#f5f5f5;color:#333;font-weight:500;white-space:nowrap}
+.filter-btn:hover{background:#e0e0e0}
+.filter-btn.active{background:#1a3a6a;color:#fff;border-color:#1a3a6a}
+
 .sec-title{font-size:15px;font-weight:600;margin-bottom:14px}
 .prow{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid #f0f0f0;flex-wrap:wrap}
 .prow:last-child{border-bottom:none}
@@ -776,7 +780,7 @@ function renderStats(){
 
   el.innerHTML=`<div class="g3" style="margin-bottom:16px"><div class="met"><div class="met-n">${total}</div><div class="met-l">Προπονήσεις</div></div><div class="met"><div class="met-n">${avg}%</div><div class="met-l">Μέση παρουσία</div></div><div class="met"><div class="met-n">${presAvg}/${players.length}</div><div class="met-l">Παίκτες/προπόνηση</div></div></div>`
   +`<div class="card"><p class="sec-title">Παρουσίες ανά παίκτη</p>${pstats.map(p=>`<div class="prow"><div class="av">${ini(p.name)}</div><div style="flex:1;min-width:0"><div style="display:flex;flex-wrap:wrap;gap:4px;align-items:center"><span style="font-size:14px;font-weight:600">${p.name}</span><span class="ml" style="display:flex;gap:4px;flex-wrap:wrap;align-items:center"><span class="tag tg">${p.present}/${total}</span>${p.injured?'<span class="tag ta">'+p.injured+' τραυμ.</span>':''}${p.justified?'<span class="tag tb">'+p.justified+' δικαιολ.</span>':''}${p.absent?'<span class="tag tr">'+p.absent+' απών</span>':''}<span style="font-size:14px;font-weight:700;color:#a81a6f">${p.pct}%</span></span></div><div class="pbar"><div class="pfill" style="width:${p.pct}%"></div></div></div></div>`).join('')}</div>`
-  +`<div class="card"><p class="sec-title">Ιστορικό προπονήσεων</p>${filtered.map(s=>{const cnt=Object.values(s.att||{}).filter(v=>v==='p').length;const ri=attSessions.findIndex(x=>x.id===s.id);return`<div class="prow"><div><div style="font-size:14px;font-weight:600">${s.topic}</div><div style="font-size:12px;color:#999">${fmtDateDay(s.date)}${s.snotes?' · 📝 '+s.snotes:''}</div></div><div class="ml" style="display:flex;align-items:center;gap:8px"><span class="tag ${cnt>=players.length*.7?'tg':'tr'}">${cnt}/${Object.keys(s.att||{}).length}</span><button class="editbtn" onclick="window.startEditAtt(${ri})">✏️</button><button class="delbtn" onclick="window.delAtt('${s.id}')">🗑️</button></div></div>`;}).join('')}</div>`;
+  +`<div class="card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px"><p class="sec-title" style="margin:0">Ιστορικό προπονήσεων</p><button id="_histTrainBtn" class="btn" style="font-size:12px;height:30px;padding:0 12px" onclick="window._toggleHistTrain()">▼ Εμφάνιση ιστορικού</button></div><div id="_histTrainWrap" style="display:none"></div></div>`;
 
   // Player detail view when specific player selected
   if(filterP!==null&&pstats.length>0){
@@ -888,9 +892,9 @@ function renderMatchStats(){
     ${pstats.map(p=>`<div class="prow"><div class="av">${ini(p.name)}</div><div style="flex:1;min-width:0"><div style="display:flex;flex-wrap:wrap;gap:4px;align-items:center"><span style="font-size:14px;font-weight:600">${p.name}</span><span class="ml" style="display:flex;gap:4px;align-items:center"><span class="tag tg">${p.present}/${total}</span>${p.absent?'<span class="tag tr">'+p.absent+' απών</span>':''}<span style="font-size:14px;font-weight:700;color:#a81a6f">${p.pct}%</span></span></div><div class="pbar"><div class="pfill" style="width:${p.pct}%"></div></div></div></div>`).join('')}
   </div>
   <div class="card">
-    <p class="sec-title">Ιστορικό αγώνων</p>
-    ${filtered.map(s=>{const cnt=Object.values(s.att||{}).filter(v=>v==='p').length;const mi=matchSessions.findIndex(x=>x.id===s.id);return`<div class="prow"><div><div style="font-size:14px;font-weight:600">${s.location==='home'?'🏠':'✈️'} ${s.opponent}</div><div style="font-size:12px;color:#999">${fmtDate(s.date)}${s.mkind?' · '+s.mkind:''}${s.result?' · '+s.result:''}</div></div><div class="ml" style="display:flex;align-items:center;gap:6px"><span class="tag ${cnt>=players.length*.7?'tg':'tr'}">${cnt}/${Object.keys(s.att||{}).length}</span><button class="editbtn" onclick="window.editMatchAtt(${mi})">✏️</button><button class="delbtn" onclick="window.delMatchAtt('${s.id}')">🗑️</button></div></div>`;}).join('')}
-  </div>`;
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px"><p class="sec-title" style="margin:0">Ιστορικό αγώνων</p><button id="_histMatchBtn" class="btn" style="font-size:12px;height:30px;padding:0 12px" onclick="window._toggleHistMatch()">▼ Εμφάνιση ιστορικού</button></div>
+    <div id="_histMatchWrap" style="display:none"></div>
+  </div>\`;
 }
 
 window.exportRoster=function(){const rows=[['Όνομα','Αριθμός','Θέση','Κατάσταση','Χρονολογία Γέννησης']];players.forEach(p=>rows.push([p.name,p.num||'',p.pos||'',stLbl(p.st),p.birth||'']));const ws=XLSX.utils.aoa_to_sheet(rows);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Ρόστερ');XLSX.writeFile(wb,'roster.xlsx',{cellDates:true});};
@@ -1003,6 +1007,130 @@ window.exportTeam=async function(){
     XLSX.writeFile(wb,teamName+'_'+new Date().toISOString().slice(0,10)+'.xlsx');
   }catch(e){alert('Σφάλμα εξαγωγής: '+e.message);}
 };
+
+// ---- History toggle + month chips ----
+window._histTrainMonth='all';
+window._histMatchMonth='all';
+
+window._getHistMonths=function(sessions){
+  var months=[];
+  sessions.forEach(function(s){
+    var m=(s.date||'').substring(0,7);
+    if(m&&months.indexOf(m)===-1)months.push(m);
+  });
+  months.sort(function(a,b){return b>a?1:-1;});
+  return months;
+};
+
+window._monthLabel=function(m){
+  if(!m)return m;
+  var parts=m.split('-');
+  var year=parts[0];var mon=parseInt(parts[1],10);
+  var names=['','Ιαν','Φεβ','Μαρ','Απρ','Μαϊ','Ιουν','Ιουλ','Αυγ','Σεπ','Οκτ','Νοε','Δεκ'];
+  return (names[mon]||mon)+' '+year;
+};
+
+window._renderHistChips=function(containerId,months,curMonth,onClickFn){
+  var c=document.getElementById(containerId);
+  if(!c)return;
+  var chips='<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px">';
+  var allActive=curMonth==='all'?'background:#1a3a6a;color:#fff;':'';
+  chips+='<button class="filter-btn'+(curMonth==='all'?' active':'')+'" onclick="'+onClickFn+'(\'all\')" style="font-size:11px;height:26px;padding:0 10px">Όλα</button>';
+  months.forEach(function(m){
+    var active=curMonth===m?' active':'';
+    chips+='<button class="filter-btn'+active+'" onclick="'+onClickFn+'(\''+m+'\')" style="font-size:11px;height:26px;padding:0 10px">'+window._monthLabel(m)+'</button>';
+  });
+  chips+='</div>';
+  return chips;
+};
+
+window._renderHistTrainBlock=function(){
+  var wrap=document.getElementById('_histTrainWrap');
+  if(!wrap)return;
+  var months=window._getHistMonths(attSessions);
+  var cur=window._histTrainMonth;
+  var sessions=cur==='all'?attSessions:attSessions.filter(function(s){return (s.date||'').substring(0,7)===cur;});
+  var chipsHtml=window._renderHistChips('_histTrainChipsWrap',months,cur,'window._setHistTrainMonth')||'';
+  var rows=sessions.map(function(s){
+    var attCount=Object.values(s.att||{}).filter(function(v){return v==='p';}).length;
+    return '<div class="prow"><div style="flex:1"><div style="font-size:13px;font-weight:600">'+s.topic+'</div>'
+      +'<div style="font-size:11px;color:#999">'+fmtDate(s.date)+(s.snotes?' · '+s.snotes:'')+'</div></div>'
+      +'<span class="tag tg">'+attCount+'/'+players.length+'</span></div>';
+  }).join('');
+  wrap.innerHTML='<div id="_histTrainChipsWrap"></div>'+(rows||'<p class="empty" style="margin:8px 0">Δεν υπάρχουν προπονήσεις.</p>');
+  // now render chips inside
+  var chipsContainer=document.getElementById('_histTrainChipsWrap');
+  if(chipsContainer){
+    var chips='<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px">';
+    chips+='<button class="filter-btn'+(cur==='all'?' active':'')+'" onclick="window._setHistTrainMonth(\'all\')" style="font-size:11px;height:26px;padding:0 10px">Όλα</button>';
+    months.forEach(function(m){chips+='<button class="filter-btn'+(cur===m?' active':'')+'" onclick="window._setHistTrainMonth(\''+m+'\')" style="font-size:11px;height:26px;padding:0 10px">'+window._monthLabel(m)+'</button>';});
+    chips+='</div>';
+    chipsContainer.innerHTML=chips;
+  }
+};
+
+window._renderHistMatchBlock=function(){
+  var wrap=document.getElementById('_histMatchWrap');
+  if(!wrap)return;
+  var months=window._getHistMonths(matchSessions);
+  var cur=window._histMatchMonth;
+  var sessions=cur==='all'?matchSessions:matchSessions.filter(function(s){return (s.date||'').substring(0,7)===cur;});
+  var rows=sessions.map(function(s){
+    var attCount=Object.values(s.att||{}).filter(function(v){return v==='p';}).length;
+    var kindLbl=s.mkind==='friendly'?'Φιλικός':s.mkind==='championship'?'Πρωτάθλημα':s.mkind==='cup'?'Κύπελλο':(s.mkind||'');
+    return '<div class="prow"><div style="flex:1"><div style="font-size:13px;font-weight:600">'+(s.opponent?'εναντίον '+s.opponent:'Αγώνας')+'</div>'
+      +'<div style="font-size:11px;color:#999">'+fmtDate(s.date)+(kindLbl?' · '+kindLbl:'')+(s.result?' · '+s.result:'')+'</div></div>'
+      +'<span class="tag tg">'+attCount+'/'+players.length+'</span></div>';
+  }).join('');
+  wrap.innerHTML='<div id="_histMatchChipsWrap"></div>'+(rows||'<p class="empty" style="margin:8px 0">Δεν υπάρχουν αγώνες.</p>');
+  var chipsContainer=document.getElementById('_histMatchChipsWrap');
+  if(chipsContainer){
+    var chips='<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px">';
+    chips+='<button class="filter-btn'+(cur==='all'?' active':'')+'" onclick="window._setHistMatchMonth(\'all\')" style="font-size:11px;height:26px;padding:0 10px">Όλα</button>';
+    months.forEach(function(m){chips+='<button class="filter-btn'+(cur===m?' active':'')+'" onclick="window._setHistMatchMonth(\''+m+'\')" style="font-size:11px;height:26px;padding:0 10px">'+window._monthLabel(m)+'</button>';});
+    chips+='</div>';
+    chipsContainer.innerHTML=chips;
+  }
+};
+
+window._setHistTrainMonth=function(m){
+  window._histTrainMonth=m;
+  window._renderHistTrainBlock();
+};
+
+window._setHistMatchMonth=function(m){
+  window._histMatchMonth=m;
+  window._renderHistMatchBlock();
+};
+
+window._toggleHistTrain=function(){
+  var wrap=document.getElementById('_histTrainWrap');
+  var btn=document.getElementById('_histTrainBtn');
+  if(!wrap||!btn)return;
+  if(wrap.style.display==='none'){
+    wrap.style.display='block';
+    btn.textContent='▲ Απόκρυψη ιστορικού';
+    window._renderHistTrainBlock();
+  }else{
+    wrap.style.display='none';
+    btn.textContent='▼ Εμφάνιση ιστορικού';
+  }
+};
+
+window._toggleHistMatch=function(){
+  var wrap=document.getElementById('_histMatchWrap');
+  var btn=document.getElementById('_histMatchBtn');
+  if(!wrap||!btn)return;
+  if(wrap.style.display==='none'){
+    wrap.style.display='block';
+    btn.textContent='▲ Απόκρυψη ιστορικού';
+    window._renderHistMatchBlock();
+  }else{
+    wrap.style.display='none';
+    btn.textContent='▼ Εμφάνιση ιστορικού';
+  }
+};
+// ---- End history toggle ----
 </script>
 </body>
 </html>
