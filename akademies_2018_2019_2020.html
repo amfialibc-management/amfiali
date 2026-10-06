@@ -895,7 +895,7 @@ function renderMatchStats(){
   <div class="card">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px"><p class="sec-title" style="margin:0">Ιστορικό αγώνων</p><button id="_histMatchBtn" class="btn" style="font-size:12px;height:30px;padding:0 12px" onclick="window._toggleHistMatch()">▼ Εμφάνιση ιστορικού</button></div>
     <div id="_histMatchWrap" style="display:none"></div>
-  </div>\`;
+  </div>`;
 }
 
 window.exportRoster=function(){const rows=[['Όνομα','Αριθμός','Θέση','Κατάσταση','Χρονολογία Γέννησης']];players.forEach(p=>rows.push([p.name,p.num||'',p.pos||'',stLbl(p.st),p.birth||'']));const ws=XLSX.utils.aoa_to_sheet(rows);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Ρόστερ');XLSX.writeFile(wb,'roster.xlsx',{cellDates:true});};
