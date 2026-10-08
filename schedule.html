@@ -287,7 +287,7 @@ function renderMatches(){
   var filtered=matches.filter(function(m){
     if(filters.day!=='all'&&m.day!==filters.day)return false;
     if(filters.type!=='all'&&m.type!==filters.type)return false;
-    if(filters.venue!=='all'){if(filters.venue==='away'){if(m.location!=='away')return false;}else{if(m.venueType!==filters.venue)return false;}}
+    if(filters.venue!=='all'){if(filters.venue==='away'){if(m.location!=='away')return false;}else if(filters.venue==='home'){if(m.location==='away')return false;}else{if(m.venueType!==filters.venue)return false;}}
     return true;
   });
   filtered.sort(function(a,b){
