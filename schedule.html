@@ -163,35 +163,35 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#1a3a6a}
     <div style="display:flex;align-items:flex-start;gap:6px;margin-bottom:6px">
       <span style="font-size:10px;font-weight:700;color:#aaa;min-width:44px;padding-top:4px">ΗΜΕΡΑ</span>
       <div style="display:grid;grid-template-columns:repeat(5,auto);gap:4px">
-        <button class="filter-btn active" onclick="setFilterChip('day','all',this)">Όλες</button>
-        <button class="filter-btn" onclick="setFilterChip('day','Σάββατο',this)">Σαβ</button>
-        <button class="filter-btn" onclick="setFilterChip('day','Κυριακή',this)">Κυρ</button>
-        <button class="filter-btn" onclick="setFilterChip('day','Δευτέρα',this)">Δευτ</button>
-        <button class="filter-btn" onclick="setFilterChip('day','Τρίτη',this)">Τρίτ</button>
+        <button class="filter-btn active" data-group="day" onclick="setFilterChip('day','all',this)">Όλες</button>
+        <button class="filter-btn" data-group="day" onclick="setFilterChip('day','Σάββατο',this)">Σαβ</button>
+        <button class="filter-btn" data-group="day" onclick="setFilterChip('day','Κυριακή',this)">Κυρ</button>
+        <button class="filter-btn" data-group="day" onclick="setFilterChip('day','Δευτέρα',this)">Δευτ</button>
+        <button class="filter-btn" data-group="day" onclick="setFilterChip('day','Τρίτη',this)">Τρίτ</button>
         <div></div>
-        <button class="filter-btn" onclick="setFilterChip('day','Τετάρτη',this)">Τετ</button>
-        <button class="filter-btn" onclick="setFilterChip('day','Πέμπτη',this)">Πέμπ</button>
-        <button class="filter-btn" onclick="setFilterChip('day','Παρασκευή',this)">Παρ</button>
+        <button class="filter-btn" data-group="day" onclick="setFilterChip('day','Τετάρτη',this)">Τετ</button>
+        <button class="filter-btn" data-group="day" onclick="setFilterChip('day','Πέμπτη',this)">Πέμπ</button>
+        <button class="filter-btn" data-group="day" onclick="setFilterChip('day','Παρασκευή',this)">Παρ</button>
       </div>
     </div>
     <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:6px">
       <span style="font-size:10px;font-weight:700;color:#aaa;min-width:44px">ΕΙΔΟΣ</span>
-      <button class="filter-btn active" onclick="setFilterChip('type','all',this)">Όλα</button>
-      <button class="filter-btn" onclick="setFilterChip('type','ΕΣΚΑΝΑ',this)">ΕΣΚΑΝΑ</button>
-      <button class="filter-btn" onclick="setFilterChip('type','ΦΕΑ',this)">ΦΕΑ</button>
-      <button class="filter-btn" onclick="setFilterChip('type','Φιλικό',this)">Φιλικό</button>
+      <button class="filter-btn active" data-group="type" onclick="setFilterChip('type','all',this)">Όλα</button>
+      <button class="filter-btn" data-group="type" onclick="setFilterChip('type','ΕΣΚΑΝΑ',this)">ΕΣΚΑΝΑ</button>
+      <button class="filter-btn" data-group="type" onclick="setFilterChip('type','ΦΕΑ',this)">ΦΕΑ</button>
+      <button class="filter-btn" data-group="type" onclick="setFilterChip('type','Φιλικό',this)">Φιλικό</button>
     </div>
     <div style="display:flex;align-items:flex-start;gap:6px">
       <span style="font-size:10px;font-weight:700;color:#aaa;min-width:44px;padding-top:5px">ΓΗΠΕΔΟ</span>
       <div style="display:flex;flex-direction:column;gap:6px">
         <div style="display:flex;gap:6px">
-          <button class="filter-btn active" onclick="setFilterChip('venue','all',this)">Όλα</button>
-          <button class="filter-btn" onclick="setFilterChip('venue','Ανοιχτό Σιταποθηκών',this)">Ανοιχτό</button>
-          <button class="filter-btn" onclick="setFilterChip('venue','Κλειστό Σιταποθηκών',this)">Κλειστό</button>
+          <button class="filter-btn active" data-group="venue" onclick="setFilterChip('venue','all',this)">Όλα</button>
+          <button class="filter-btn" data-group="venue" onclick="setFilterChip('venue','Ανοιχτό Σιταποθηκών',this)">Ανοιχτό</button>
+          <button class="filter-btn" data-group="venue" onclick="setFilterChip('venue','Κλειστό Σιταποθηκών',this)">Κλειστό</button>
         </div>
         <div style="display:flex;gap:6px">
-          <button class="filter-btn" onclick="setFilterChip('venue','home',this)">Εντός έδρας</button>
-          <button class="filter-btn" onclick="setFilterChip('venue','away',this)">Εκτός έδρας</button>
+          <button class="filter-btn" data-group="venue" onclick="setFilterChip('venue','home',this)">Εντός έδρας</button>
+          <button class="filter-btn" data-group="venue" onclick="setFilterChip('venue','away',this)">Εκτός έδρας</button>
         </div>
       </div>
     </div>
@@ -282,8 +282,8 @@ function setFilterDrop(type,val){
 }
 function setFilterChip(type,val,btn){
   filters[type]=val;
-  var parent=btn.parentElement;
-  parent.querySelectorAll('.filter-btn').forEach(function(b){b.classList.remove('active');});
+  var group=btn.getAttribute('data-group')||type;
+  document.querySelectorAll('.filter-btn[data-group="'+group+'"]').forEach(function(b){b.classList.remove('active');});
   btn.classList.add('active');
   renderMatches();
 }
