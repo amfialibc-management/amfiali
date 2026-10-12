@@ -48,6 +48,7 @@ input:focus,select:focus{outline:none;border-color:#1a6fa8}
 .ta{background:#FAEEDA;color:#854F0B}
 .tr{background:#FCEBEB;color:#A32D2D}
 .tb{background:#E6F1FB;color:#185FA5}
+.tn{background:#F5F5F5;color:#666}
 .delbtn,.editbtn{background:none;border:none;cursor:pointer;font-size:16px;padding:2px 6px;opacity:.5}
 .delbtn:hover{opacity:1;color:#c00}.editbtn:hover{opacity:1;color:#1a6fa8}
 .sess{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;background:#f9f9f9;border:1px solid #eee;border-radius:8px;margin-bottom:6px;flex-wrap:wrap}
@@ -269,7 +270,7 @@ input:focus,select:focus{outline:none;border-color:#1a6fa8}
     <div class="g2 mb"><div><div class="lbl">Ημερομηνία</div><input id="mdate" type="date"></div><div><div class="lbl">Αντίπαλος</div><input id="mopponent" placeholder="π.χ. Πειραϊκός"></div></div>
     <div class="g2 mb"><div><div class="lbl">Αποτέλεσμα (προαιρετικό)</div><input id="mresult" placeholder="π.χ. 78-65"></div><div><div class="lbl">Έδρα</div><select id="mlocation"><option value="home">🏠 Εντός έδρας</option><option value="away">✈️ Εκτός έδρας</option></select></div></div>
     <div class="g2 mb"><div><div class="lbl">Είδος Αγώνα</div><select id="mkind"><option value="">— Επίλεξε —</option><option value="ΕΣΚΑΝΑ">ΕΣΚΑΝΑ</option><option value="Φιλικό">Φιλικό</option><option value="ΦΕΑ">ΦΕΑ</option><option value="Κύπελλο">Κύπελλο</option><option value="Τουρνουά">Τουρνουά</option></select></div><div></div></div>
-    <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center"><span style="font-size:12px;color:#999">Υπόμνημα:</span><span class="tag tg">Παρών</span><span class="tag tr">Απών</span></div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center"><span style="font-size:12px;color:#999">Υπόμνημα:</span><span class="tag tg">Παρών</span><span class="tag tr">Απών</span><span class="tag tb">Δικαιολογημένος</span><span class="tag tn">Δεν κλήθηκε</span></div>
   </div>
   <div id="mattlist"></div>
   <div id="mattact" style="display:none;gap:8px;justify-content:flex-end;margin-top:12px;flex-wrap:wrap">
@@ -295,8 +296,8 @@ onAuthStateChanged(auth,function(user){if(!user){window.location.href='login.htm
 
 const CP='ak_koritsia_a_players',CS='ak_koritsia_a_sessions',CA='ak_koritsia_a_attendance',CM='ak_koritsia_a_matches';
 const OPTS=[{k:'p',l:'Παρών',bg:'#EAF3DE',c:'#3B6D11',b:'2px solid #3B6D11'},{k:'a',l:'Απών',bg:'#FCEBEB',c:'#A32D2D',b:'2px solid #A32D2D'},{k:'i',l:'Τραυματίας',bg:'#FAEEDA',c:'#854F0B',b:'2px solid #854F0B'},{k:'j',l:'Δικαιολ.',bg:'#E6F1FB',c:'#185FA5',b:'2px solid #185FA5'}];
-const MOPTS=[{k:'p',l:'Παρών',bg:'#EAF3DE',c:'#3B6D11',b:'2px solid #3B6D11'},{k:'a',l:'Απών',bg:'#FCEBEB',c:'#A32D2D',b:'2px solid #A32D2D'}];
-const LABEL={p:'Παρών',a:'Απών',i:'Τραυματίας',j:'Δικαιολογημένος'};
+const MOPTS=[{k:'p',l:'Παρών',bg:'#EAF3DE',c:'#3B6D11',b:'2px solid #3B6D11'},{k:'a',l:'Απών',bg:'#FCEBEB',c:'#A32D2D',b:'2px solid #A32D2D'},{k:'j',l:'Δικαιολογημένος',bg:'#E6F1FB',c:'#185FA5',b:'2px solid #185FA5'},{k:'n',l:'Δεν κλήθηκε',bg:'#F5F5F5',c:'#666',b:'2px solid #999'}];
+const LABEL={p:'Παρών',a:'Απών',i:'Τραυματίας',j:'Δικαιολογημένος',n:'Δεν κλήθηκε'};
 const INTLBL={low:'🟢 Χαμηλή',medium:'🟡 Μέτρια',high:'🔴 Υψηλή'};
 
 let players=[],sessions=[],attSessions=[],matchSessions=[],curAtt=[],curMatchAtt=[],editAttIdx=-1,editMatchIdx=-1,editSessId=null,editPlayerId=null;
@@ -983,7 +984,7 @@ window.exportTeam=async function(){
     // 2. Training Attendance
     var aSnap=await getDocs(collection(db,'ak_koritsia_a_attendance'));
     var rows2=[['Ημερομηνία','Θέμα','Παίκτης','Κατάσταση']];
-    var LM={'p':'Παρών','a':'Απών','i':'Τραυματίας','j':'Δικαιολογημένος'};
+    var LM={'p':'Παρών','a':'Απών','i':'Τραυματίας','j':'Δικαιολογημένος','n':'Δεν κλήθηκε'};
     aSnap.docs.forEach(function(d){
       var s=d.data();
       pls.forEach(function(p){
