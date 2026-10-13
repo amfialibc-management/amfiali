@@ -102,7 +102,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#1a3a6a}
       </div>
       <div class="field">
         <div class="lbl">Κατηγορία</div>
-        <select id="sCategory">
+        <select id="sCategory" onchange="document.getElementById('sCategoryCustomWrap').style.display=this.value==='__other__'?'block':'none'">
           <option value="Ανδρικό">Ανδρικό</option>
           <option value="Εφηβικό">Εφηβικό</option>
           <option value="Κορασίδες">Κορασίδες</option>
@@ -115,7 +115,11 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#1a3a6a}
           <option value="2019-2020-2021 (2018)">Ακαδ. 2019-2020-2021 (2018)</option>
           <option value="Κορίτσια Α">Ακαδ. Κορίτσια Α</option>
           <option value="Κορίτσια Β">Ακαδ. Κορίτσια Β</option>
+          <option value="__other__">✏️ Άλλο (γράψε μόνος)...</option>
         </select>
+        <div id="sCategoryCustomWrap" style="display:none;margin-top:6px">
+          <input id="sCategoryCustom" placeholder="Γράψε κατηγορία..." style="width:100%">
+        </div>
       </div>
     </div>
     <div class="field">
@@ -388,7 +392,7 @@ async function saveMatch(){
     day:document.getElementById('sDay').value,
     time:document.getElementById('sTime').value,
     type:document.getElementById('sType').value,
-    category:document.getElementById('sCategory').value,
+    category:(document.getElementById('sCategory').value==='__other__'?document.getElementById('sCategoryCustom').value.trim():document.getElementById('sCategory').value),
     opponent:document.getElementById('sOpponent').value.trim(),
     location:loc,
     venueType:loc==='home'?document.getElementById('sVenueType').value:'',
@@ -415,7 +419,10 @@ window.editMatch=async function(id){
   document.getElementById('sDay').value=m.day||'Δευτέρα';
   document.getElementById('sTime').value=m.time||'';
   document.getElementById('sType').value=m.type||'ΕΣΚΑΝΑ';
-  document.getElementById('sCategory').value=m.category||'Ανδρικό';
+  var catSel=document.getElementById('sCategory');
+  var catExists=Array.from(catSel.options).some(function(o){return o.value===m.category;});
+  if(catExists){catSel.value=m.category||'Ανδρικό';document.getElementById('sCategoryCustomWrap').style.display='none';}
+  else{catSel.value='__other__';document.getElementById('sCategoryCustomWrap').style.display='block';document.getElementById('sCategoryCustom').value=m.category||'';}
   document.getElementById('sOpponent').value=m.opponent||'';
   document.getElementById('sLocation').value=m.location||'home';
   toggleLocation();
