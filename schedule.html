@@ -29,7 +29,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#1a3a6a}
 .filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
 .filter-btn{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid #e8e8e8;background:#f9f9f9;color:#888}
 .filter-btn.active{background:#1a3a6a;color:#fff;border-color:#1a3a6a}
-.match-card{background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:7px 8px;margin-bottom:0;height:130px;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-start}
+.match-card{background:#fff;border:1px solid #e0e0e0;border-radius:10px;padding:7px 8px;margin-bottom:0;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-start}
 .match-day{font-size:10px;font-weight:700;color:#1a3a6a;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px}
 .match-title{font-size:10px;font-weight:700;color:#222;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .match-info{font-size:11px;color:#444;margin-bottom:2px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -46,6 +46,14 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#1a3a6a}
   #matchesList{grid-template-columns:1fr 1fr!important}
 }
 .match-actions{display:flex;gap:6px;margin-top:10px}
+.match-card{position:relative}
+.status-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;border-radius:10px;pointer-events:none;z-index:2}
+.status-overlay.cancelled{background:rgba(255,255,255,0.55)}
+.status-overlay.pending{background:rgba(255,255,255,0.45)}
+.status-symbol{font-size:72px;line-height:1;font-weight:900;opacity:0.85;user-select:none}
+.status-symbol.x{color:#c0392b}
+.status-symbol.q{color:#e74c3c}
+@media(min-width:480px){.status-symbol{font-size:100px}}
 .tag-eskanа{background:#e8f4fd;color:#1a6fa8;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600}
 .tag-fea{background:#EAF3DE;color:#3B6D11;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600}
 .tag-filiko{background:#fff8e1;color:#856404;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600}
@@ -312,10 +320,13 @@ function renderMatches(){
   if(!filtered.length){el.innerHTML='<p class="empty" style="grid-column:1/-1">Δεν υπάρχουν αγώνες.</p>';return;}
   el.innerHTML=filtered.map(function(m){
     var tagCls=m.type==='ΕΣΚΑΝΑ'?'tag-eskanа':m.type==='ΦΕΑ'?'tag-fea':'tag-filiko';
+    var isCancelled=m.status==='cancelled';
+    var isPending=m.status==='pending';
     var adminBtns=_role==='admin'
       ?'<button style="font-size:10px;height:20px;padding:0 6px;border-radius:4px;border:1px solid #ccc;background:#f5f5f5;color:#888;cursor:pointer" data-id="'+m.id+'" onclick="editMatch(this.dataset.id)">Επεξ</button>'
        +'<button style="font-size:10px;height:20px;padding:0 6px;border-radius:4px;border:1px solid #f5c6cb;background:#f8d7da;color:#721c24;cursor:pointer" data-id="'+m.id+'" onclick="delMatch(this.dataset.id)">Διαγρ</button>'
-       +'<button style="font-size:10px;height:20px;padding:0 6px;border-radius:4px;border:1px solid #d4a500;background:#fff8e1;color:#856404;cursor:pointer" data-id="'+m.id+'" onclick="cancelMatch(this.dataset.id)">Ακυρ</button>'
+       +'<button style="font-size:10px;height:20px;padding:0 6px;border-radius:4px;border:1px solid '+(isCancelled?'#3B6D11':'#c0392b')+';background:'+(isCancelled?'#EAF3DE':'#f8d7da')+';color:'+(isCancelled?'#3B6D11':'#721c24')+';cursor:pointer;font-weight:700" data-id="'+m.id+'" onclick="toggleStatus(this.dataset.id,\'cancelled\')">'+(isCancelled?'↩ Ακύρωση':'✕')+'</button>'
+       +'<button style="font-size:10px;height:20px;padding:0 6px;border-radius:4px;border:1px solid '+(isPending?'#3B6D11':'#e74c3c')+';background:'+(isPending?'#EAF3DE':'#fff0f0')+';color:'+(isPending?'#3B6D11':'#e74c3c')+';cursor:pointer;font-weight:700" data-id="'+m.id+'" onclick="toggleStatus(this.dataset.id,\'pending\')">'+(isPending?'↩ Αναμ.':'?')+'</button>'
       :'';
     var big=window.innerWidth>=480;
     return '<div class="match-card">'
