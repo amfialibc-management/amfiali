@@ -35,7 +35,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#1a3a6a}
 .match-info{font-size:11px;color:#444;margin-bottom:2px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .match-loc{font-size:10px;color:#555;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 @media(min-width:480px){
-  .match-card{height:180px;padding:14px 16px}
+  .match-card{padding:14px 16px}
   .match-day{font-size:14px;margin-bottom:4px}
   .match-title{font-size:15px;margin-bottom:6px}
   .match-info{font-size:14px;margin-bottom:4px}
@@ -51,7 +51,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#1a3a6a}
 .status-overlay.cancelled{background:rgba(255,255,255,0.55)}
 .status-overlay.pending{background:rgba(255,255,255,0.45)}
 .status-symbol{font-size:72px;line-height:1;font-weight:900;opacity:0.85;user-select:none}
-.status-symbol.x{color:#c0392b}
+.status-symbol.x{color:#e67e22}
 .status-symbol.q{color:#e74c3c}
 @media(min-width:480px){.status-symbol{font-size:100px}}
 .tag-eskanа{background:#e8f4fd;color:#1a6fa8;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600}
@@ -325,11 +325,17 @@ function renderMatches(){
     var adminBtns=_role==='admin'
       ?'<button style="font-size:10px;height:20px;padding:0 6px;border-radius:4px;border:1px solid #ccc;background:#f5f5f5;color:#888;cursor:pointer" data-id="'+m.id+'" onclick="editMatch(this.dataset.id)">Επεξ</button>'
        +'<button style="font-size:10px;height:20px;padding:0 6px;border-radius:4px;border:1px solid #f5c6cb;background:#f8d7da;color:#721c24;cursor:pointer" data-id="'+m.id+'" onclick="delMatch(this.dataset.id)">Διαγρ</button>'
-       +'<button style="font-size:10px;height:20px;padding:0 6px;border-radius:4px;border:1px solid '+(isCancelled?'#3B6D11':'#c0392b')+';background:'+(isCancelled?'#EAF3DE':'#f8d7da')+';color:'+(isCancelled?'#3B6D11':'#721c24')+';cursor:pointer;font-weight:700" data-id="'+m.id+'" onclick="toggleStatus(this.dataset.id,\'cancelled\')">'+(isCancelled?'↩ Ακύρωση':'✕')+'</button>'
+       +'<button style="font-size:10px;height:20px;padding:0 6px;border-radius:4px;border:1px solid '+(isCancelled?'#3B6D11':'#e67e22')+';background:'+(isCancelled?'#EAF3DE':'#fff3e0')+';color:'+(isCancelled?'#3B6D11':'#e67e22')+';cursor:pointer;font-weight:700" data-id="'+m.id+'" onclick="toggleStatus(this.dataset.id,\'cancelled\')">'+(isCancelled?'↩ Ακύρωση':'✕')+'</button>'
        +'<button style="font-size:10px;height:20px;padding:0 6px;border-radius:4px;border:1px solid '+(isPending?'#3B6D11':'#e74c3c')+';background:'+(isPending?'#EAF3DE':'#fff0f0')+';color:'+(isPending?'#3B6D11':'#e74c3c')+';cursor:pointer;font-weight:700" data-id="'+m.id+'" onclick="toggleStatus(this.dataset.id,\'pending\')">'+(isPending?'↩ Αναμ.':'?')+'</button>'
       :'';
     var big=window.innerWidth>=480;
+    var overlay=isCancelled
+      ?'<div class="status-overlay cancelled"><span class="status-symbol x">✕</span></div>'
+      :isPending
+      ?'<div class="status-overlay pending"><span class="status-symbol q">?</span></div>'
+      :'';
     return '<div class="match-card">'
+      +overlay
       +'<div style="margin-bottom:3px">'
        +'<span style="font-size:'+(big?'14':'11')+'px;font-weight:800;color:'+(m.day==='Κυριακή'?'#e67e22':m.day==='Σάββατο'?'#3498db':'#27ae60')+'">'+( m.day||'')+'</span>'
        +(m.date?' <span style="font-size:'+(big?'12':'10')+'px;color:#222;font-weight:600"> '+new Date(m.date+'T00:00:00').toLocaleDateString('el-GR',{day:'2-digit',month:'2-digit',year:'numeric'})+'</span>':'')
@@ -495,18 +501,15 @@ async function loadArchive(){
   }catch(e){el.innerHTML='<p class="empty">Σφάλμα: '+e.message+'</p>';}
 }
 
-window.cancelMatch=async function(id){
-  if(!confirm('Να σημειωθεί ως Ακυρωθείς;'))return;
+window.toggleStatus=async function(id,newStatus){
   try{
     var m=matches.find(function(x){return x.id===id;});
-    if(m){
-      var archived=Object.assign({},m);
-      delete archived.id;
-      archived.deletedAt=new Date().toISOString().slice(0,10);
-      archived.reason='cancelled';
-      await db.collection('deleted_matches').add(archived);
+    if(!m)return;
+    if(m.status===newStatus){
+      await db.collection('weekly_schedule').doc(id).update({status:firebase.firestore.FieldValue.delete()});
+    }else{
+      await db.collection('weekly_schedule').doc(id).update({status:newStatus});
     }
-    await db.collection('weekly_schedule').doc(id).delete();
   }catch(e){alert('Σφάλμα: '+e.message);}
 };
 
