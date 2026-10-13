@@ -47,14 +47,14 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#1a3a6a}
 }
 .match-actions{display:flex;gap:6px;margin-top:10px}
 .match-card{position:relative}
-.status-overlay{position:absolute;top:0;right:0;bottom:0;width:40%;display:flex;align-items:center;justify-content:center;border-radius:0 10px 10px 0;pointer-events:none;z-index:2}
-.status-overlay.cancelled{background:linear-gradient(to left,rgba(255,243,224,0.85) 60%,rgba(255,243,224,0) 100%)}
-.status-overlay.pending{background:linear-gradient(to left,rgba(255,235,235,0.85) 60%,rgba(255,235,235,0) 100%)}
-.status-symbol{font-size:56px;line-height:1;font-weight:900;opacity:0.9;user-select:none}
+.status-overlay{position:absolute;bottom:6px;right:8px;pointer-events:none;z-index:2;line-height:1}
+.status-overlay.cancelled{}
+.status-overlay.pending{}
+.status-symbol{font-size:44px;line-height:1;font-weight:900;opacity:0.8;user-select:none}
 .status-symbol.x{color:#e67e22}
 .status-symbol.q{color:#e74c3c}
-.match-card.is-cancelled,.match-card.is-pending{opacity:0.75}
-@media(min-width:480px){.status-symbol{font-size:72px}}
+.match-card.is-cancelled,.match-card.is-pending{opacity:0.78}
+@media(min-width:480px){.status-symbol{font-size:58px}}
 .tag-eskanа{background:#e8f4fd;color:#1a6fa8;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600}
 .tag-fea{background:#EAF3DE;color:#3B6D11;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600}
 .tag-filiko{background:#fff8e1;color:#856404;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600}
