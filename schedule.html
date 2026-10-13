@@ -47,13 +47,14 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#1a3a6a}
 }
 .match-actions{display:flex;gap:6px;margin-top:10px}
 .match-card{position:relative}
-.status-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;border-radius:10px;pointer-events:none;z-index:2}
-.status-overlay.cancelled{background:rgba(255,255,255,0.55)}
-.status-overlay.pending{background:rgba(255,255,255,0.45)}
-.status-symbol{font-size:72px;line-height:1;font-weight:900;opacity:0.85;user-select:none}
+.status-overlay{position:absolute;top:0;right:0;bottom:0;width:40%;display:flex;align-items:center;justify-content:center;border-radius:0 10px 10px 0;pointer-events:none;z-index:2}
+.status-overlay.cancelled{background:linear-gradient(to left,rgba(255,243,224,0.85) 60%,rgba(255,243,224,0) 100%)}
+.status-overlay.pending{background:linear-gradient(to left,rgba(255,235,235,0.85) 60%,rgba(255,235,235,0) 100%)}
+.status-symbol{font-size:56px;line-height:1;font-weight:900;opacity:0.9;user-select:none}
 .status-symbol.x{color:#e67e22}
 .status-symbol.q{color:#e74c3c}
-@media(min-width:480px){.status-symbol{font-size:100px}}
+.match-card.is-cancelled,.match-card.is-pending{opacity:0.75}
+@media(min-width:480px){.status-symbol{font-size:72px}}
 .tag-eskanа{background:#e8f4fd;color:#1a6fa8;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600}
 .tag-fea{background:#EAF3DE;color:#3B6D11;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600}
 .tag-filiko{background:#fff8e1;color:#856404;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600}
@@ -334,7 +335,8 @@ function renderMatches(){
       :isPending
       ?'<div class="status-overlay pending"><span class="status-symbol q">?</span></div>'
       :'';
-    return '<div class="match-card">'
+    var cardClass='match-card'+(isCancelled?' is-cancelled':isPending?' is-pending':'');
+    return '<div class="'+cardClass+'">'
       +overlay
       +'<div style="margin-bottom:3px">'
        +'<span style="font-size:'+(big?'14':'11')+'px;font-weight:800;color:'+(m.day==='Κυριακή'?'#e67e22':m.day==='Σάββατο'?'#3498db':'#27ae60')+'">'+( m.day||'')+'</span>'
@@ -483,7 +485,13 @@ async function loadArchive(){
          +'<button style="font-size:10px;height:20px;padding:0 6px;border-radius:4px;border:1px solid #f5c6cb;background:#f8d7da;color:#721c24;cursor:pointer" data-id="'+m.id+'" onclick="permDelArchive(this.dataset.id)">🗑️ Οριστική διαγραφή</button>'
          +'</div>'
         :'';
-      return '<div class="match-card" style="opacity:0.85">'
+      var archOverlay=m.status==='cancelled'
+        ?'<div class="status-overlay cancelled"><span class="status-symbol x">✕</span></div>'
+        :m.status==='pending'
+        ?'<div class="status-overlay pending"><span class="status-symbol q">?</span></div>'
+        :'';
+      return '<div class="match-card'+(m.status==='cancelled'?' is-cancelled':m.status==='pending'?' is-pending':'')+'" style="opacity:0.85">'
+        +archOverlay
         +'<div style="margin-bottom:4px">'
         +'<span style="font-size:14px;font-weight:800;color:'+dayColor+'">'+(m.day||'')+'</span>'
         +(m.date?' <span style="font-size:11px;color:#222;font-weight:600">'+new Date(m.date+'T00:00:00').toLocaleDateString('el-GR',{day:'2-digit',month:'2-digit',year:'numeric'})+'</span>':'')
@@ -542,6 +550,11 @@ window.delMatch=async function(id){
       var archived=Object.assign({},m);
       delete archived.id;
       archived.deletedAt=new Date().toISOString().slice(0,10);
+      if(!archived.reason){
+        archived.reason=m.status==='cancelled'?'cancelled':'deleted';
+      }
+      // keep status so the X shows in archive too
+      if(m.status)archived.status=m.status;
       await db.collection('deleted_matches').add(archived);
     }
     await db.collection('weekly_schedule').doc(id).delete();
