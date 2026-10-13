@@ -185,6 +185,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#1a3a6a}
         <button class="filter-btn" data-group="day" onclick="setFilterChip('day','Τετάρτη',this)">Τετ</button>
         <button class="filter-btn" data-group="day" onclick="setFilterChip('day','Πέμπτη',this)">Πέμπ</button>
         <button class="filter-btn" data-group="day" onclick="setFilterChip('day','Παρασκευή',this)">Παρ</button>
+        <button class="filter-btn" data-group="day" onclick="setFilterChip('day','ΣΚ',this)">ΣΚ</button>
       </div>
     </div>
     <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:6px">
@@ -304,7 +305,7 @@ function setFilterChip(type,val,btn){
 function renderMatches(){
   var el=document.getElementById('matchesList');
   var filtered=matches.filter(function(m){
-    if(filters.day!=='all'&&m.day!==filters.day)return false;
+    if(filters.day!=='all'){if(filters.day==='ΣΚ'){if(m.day!=='Σάββατο'&&m.day!=='Κυριακή')return false;}else if(m.day!==filters.day)return false;}
     if(filters.type!=='all'&&m.type!==filters.type)return false;
     if(filters.venue!=='all'){if(filters.venue==='away'){if(m.location!=='away')return false;}else if(filters.venue==='home'){if(m.location==='away')return false;}else{if(m.venueType!==filters.venue)return false;}}
     return true;
