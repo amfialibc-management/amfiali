@@ -654,11 +654,9 @@ setTimeout(function(){countAllPlayers();loadTeamCounts();},2000);
   var sl=document.querySelector('.sidebar-logo');
   if(dh&&sl){
     var img=dh.querySelector('img');
-    var h1=dh.querySelector('h1');
-    var h2=dh.querySelector('h2');
+    var title=dh.querySelector('.desktop-header-title');
     if(img)sl.appendChild(img.cloneNode(true));
-    if(h1){var t=document.createElement('div');t.style.cssText='font-size:15px;font-weight:700;color:#222;margin:6px 0 2px';t.textContent=h1.textContent;sl.appendChild(t);}
-    if(h2){var s=document.createElement('div');s.style.cssText='font-size:12px;color:#666';s.textContent=h2.textContent;sl.appendChild(s);}
+    if(title){var t=document.createElement('div');t.style.cssText='font-size:13px;font-weight:700;color:#222;margin:6px 0 2px;text-align:center';t.textContent=title.textContent;sl.appendChild(t);}
   }
 })();
 </script>
