@@ -109,6 +109,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#1a3a6a}
         <select id="sType">
           <option value="ΕΣΚΑΝΑ">ΕΣΚΑΝΑ</option>
           <option value="ΦΕΑ">ΦΕΑ</option>
+          <option value="ΦΕΑ (Γιατρός)">ΦΕΑ (Γιατρός)</option>
           <option value="Φιλικό">Φιλικό</option>
         </select>
       </div>
@@ -196,6 +197,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#1a3a6a}
       <button class="filter-btn active" data-group="type" onclick="setFilterChip('type','all',this)">Όλα</button>
       <button class="filter-btn" data-group="type" onclick="setFilterChip('type','ΕΣΚΑΝΑ',this)">ΕΣΚΑΝΑ</button>
       <button class="filter-btn" data-group="type" onclick="setFilterChip('type','ΦΕΑ',this)">ΦΕΑ</button>
+      <button class="filter-btn" data-group="type" onclick="setFilterChip('type','ΦΕΑ (Γιατρός)',this)">ΦΕΑ (Γιατρός)</button>
       <button class="filter-btn" data-group="type" onclick="setFilterChip('type','Φιλικό',this)">Φιλικό</button>
     </div>
     <div style="display:flex;align-items:flex-start;gap:6px">
@@ -230,6 +232,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#1a3a6a}
           <option value="all">Όλα τα είδη</option>
           <option value="ΕΣΚΑΝΑ">ΕΣΚΑΝΑ</option>
           <option value="ΦΕΑ">ΦΕΑ</option>
+          <option value="ΦΕΑ (Γιατρός)">ΦΕΑ (Γιατρός)</option>
           <option value="Φιλικό">Φιλικό</option>
         </select>
       </div>
@@ -324,7 +327,7 @@ function renderMatches(){
   });
   if(!filtered.length){el.innerHTML='<p class="empty" style="grid-column:1/-1">Δεν υπάρχουν αγώνες.</p>';return;}
   el.innerHTML=filtered.map(function(m){
-    var tagCls=m.type==='ΕΣΚΑΝΑ'?'tag-eskanа':m.type==='ΦΕΑ'?'tag-fea':'tag-filiko';
+    var tagCls=m.type==='ΕΣΚΑΝΑ'?'tag-eskanа':(m.type==='ΦΕΑ'||m.type==='ΦΕΑ (Γιατρός)')?'tag-fea':'tag-filiko';
     var isCancelled=m.status==='cancelled';
     var isPending=m.status==='pending';
     var adminBtns=_role==='admin'
@@ -479,7 +482,7 @@ async function loadArchive(){
     docs.sort(function(a,b){return(b.deletedAt||'').localeCompare(a.deletedAt||'');});
     if(!docs.length){el.innerHTML='<p class="empty">Δεν βρέθηκαν αγώνες.</p>';return;}
     el.innerHTML=docs.map(function(m){
-      var tagCls=m.type==='ΕΣΚΑΝΑ'?'tag-eskanа':m.type==='ΦΕΑ'?'tag-fea':'tag-filiko';
+      var tagCls=m.type==='ΕΣΚΑΝΑ'?'tag-eskanа':(m.type==='ΦΕΑ'||m.type==='ΦΕΑ (Γιατρός)')?'tag-fea':'tag-filiko';
       var dayColor=m.day==='Κυριακή'?'#e67e22':m.day==='Σάββατο'?'#3498db':'#27ae60';
       var statusBadge=m.reason==='cancelled'
         ?'<span style="font-size:10px;background:#fff8e1;color:#856404;border:1px solid #d4a500;border-radius:4px;padding:1px 6px;margin-left:6px">Ακυρώθηκε</span>'
