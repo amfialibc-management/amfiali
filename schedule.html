@@ -54,6 +54,9 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#1a3a6a}
 .status-symbol.x{color:#e67e22}
 .status-symbol.q{color:#e74c3c}
 .match-card.is-cancelled,.match-card.is-pending{opacity:0.78}
+.match-card.is-home{background:#eaf4fb;border-color:#b3d6ee}
+.match-title.eskanа-title{font-size:12px;font-weight:900}
+@media(min-width:480px){.match-title.eskanа-title{font-size:17px}}
 @media(min-width:480px){.status-symbol{font-size:58px}}
 .tag-eskanа{background:#e8f4fd;color:#1a6fa8;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600}
 .tag-fea{background:#EAF3DE;color:#3B6D11;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600}
@@ -336,7 +339,8 @@ function renderMatches(){
       :isPending
       ?'<div class="status-overlay pending"><span class="status-symbol q">?</span></div>'
       :'';
-    var cardClass='match-card'+(isCancelled?' is-cancelled':isPending?' is-pending':'');
+    var isHome=m.location!=='away';
+    var cardClass='match-card'+(isCancelled?' is-cancelled':isPending?' is-pending':'')+(isHome?' is-home':'');
     return '<div class="'+cardClass+'">'
       +overlay
       +'<div style="margin-bottom:3px">'
@@ -344,7 +348,7 @@ function renderMatches(){
        +(m.date?' <span style="font-size:'+(big?'12':'10')+'px;color:#222;font-weight:600"> '+new Date(m.date+'T00:00:00').toLocaleDateString('el-GR',{day:'2-digit',month:'2-digit',year:'numeric'})+'</span>':'')
        +(m.time?' <span style="font-size:'+(big?'14':'11')+'px;font-weight:800;color:#1a3a6a"> '+m.time+'</span>':'')
        +'</div>'
-      +'<div class="match-title"><span style="color:#0000ff;font-weight:800">'+m.category+'</span> <span class="'+tagCls+'" style="font-size:10px;padding:2px 6px">'+m.type+'</span></div>'
+      +'<div class="match-title'+(m.type==='ΕΣΚΑΝΑ'?' eskanа-title':'')+'"><span style="color:#0000ff;font-weight:800">'+m.category+'</span> <span class="'+tagCls+'" style="font-size:10px;padding:2px 6px">'+m.type+'</span></div>'
       +(m.opponent?'<div class="match-info">vs '+m.opponent+'</div>':'')
       +(m.location==='home'&&m.venueType?'<div class="match-info">'+m.venueType+'</div>':'')
       +(m.location==='away'&&m.venue?'<div class="match-info">'+m.venue+'</div>':'')
