@@ -347,7 +347,7 @@ function renderMatches(){
     return '<div class="'+cardClass+'">'
       +overlay
       +'<div style="margin-bottom:3px">'
-       +'<span style="font-size:'+(big?'14':'11')+'px;font-weight:800;color:'+(m.day==='Κυριακή'?'#e67e22':m.day==='Σάββατο'?'#3498db':'#27ae60')+'">'+( m.day||'')+'</span>'
+       +'<span style="font-size:'+(big?'14':'11')+'px;font-weight:800;color:'+(m.day==='Κυριακή'?'#e67e22':m.day==='Σάββατο'?'#27ae60':'#3498db')+'">'+( m.day||'')+'</span>'
        +(m.date?' <span style="font-size:'+(big?'12':'10')+'px;color:#222;font-weight:600"> '+new Date(m.date+'T00:00:00').toLocaleDateString('el-GR',{day:'2-digit',month:'2-digit',year:'numeric'})+'</span>':'')
        +(m.time?' <span style="font-size:'+(big?'14':'11')+'px;font-weight:800;color:#1a3a6a"> '+m.time+'</span>':'')
        +'</div>'
@@ -483,7 +483,7 @@ async function loadArchive(){
     if(!docs.length){el.innerHTML='<p class="empty">Δεν βρέθηκαν αγώνες.</p>';return;}
     el.innerHTML=docs.map(function(m){
       var tagCls=m.type==='ΕΣΚΑΝΑ'?'tag-eskanа':(m.type==='ΦΕΑ'||m.type==='ΦΕΑ (Γιατρός)')?'tag-fea':'tag-filiko';
-      var dayColor=m.day==='Κυριακή'?'#e67e22':m.day==='Σάββατο'?'#3498db':'#27ae60';
+      var dayColor=m.day==='Κυριακή'?'#e67e22':m.day==='Σάββατο'?'#27ae60':'#3498db';
       var statusBadge=m.reason==='cancelled'
         ?'<span style="font-size:10px;background:#fff8e1;color:#856404;border:1px solid #d4a500;border-radius:4px;padding:1px 6px;margin-left:6px">Ακυρώθηκε</span>'
         :'<span style="font-size:10px;background:#f8d7da;color:#721c24;border:1px solid #f5c6cb;border-radius:4px;padding:1px 6px;margin-left:6px">Διαγράφηκε</span>';
