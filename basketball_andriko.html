@@ -34,10 +34,6 @@ input:focus,select:focus{outline:none;border-color:#1a6fa8}
 .btn-blue:hover{background:#155d8e}
 .btn-green{background:#EAF3DE;color:#3B6D11;border:1px solid #3B6D11;font-weight:600}
 .btn-yellow{background:#fff8e1;color:#856404;border:1px solid #ffc107;font-weight:600}
-.filter-btn{font-size:12px;padding:0 10px;height:28px;border:1px solid #ccc;border-radius:14px;cursor:pointer;background:#f5f5f5;color:#333;font-weight:500;white-space:nowrap}
-.filter-btn:hover{background:#e0e0e0}
-.filter-btn.active{background:#1a3a6a;color:#fff;border-color:#1a3a6a}
-
 .sec-title{font-size:15px;font-weight:600;margin-bottom:14px}
 .prow{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid #f0f0f0;flex-wrap:wrap}
 .prow:last-child{border-bottom:none}
@@ -54,17 +50,15 @@ input:focus,select:focus{outline:none;border-color:#1a6fa8}
 .pbar{height:6px;border-radius:3px;background:#eee;margin-top:5px}
 .pfill{height:100%;border-radius:3px;background:#1D9E75}
 .err{font-size:12px;color:#c00;margin-top:6px;display:none}
-.ok{font-size:13px;color:#3B6D11;display:none;font-weight:500;align-self:center;margin-right:8px}
+.ok{font-size:13px;color:#3B6D11;margin-top:6px;display:none;text-align:right;font-weight:500}
 .empty{text-align:center;padding:2.5rem;color:#999;font-size:14px}
 .xbar{display:flex;gap:8px;justify-content:flex-end;margin-bottom:12px;flex-wrap:wrap}
 .epanel{background:#fff8e1;border:1px solid #ffc107;border-radius:10px;padding:14px;margin-bottom:14px;display:none}
 
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1a7a3f;color:#fff;padding:12px 28px;border-radius:10px;font-size:15px;font-weight:600;box-shadow:0 4px 16px rgba(0,0,0,.2);z-index:9998;display:none;animation:fadeIn .2s ease}
 @keyframes fadeIn{from{opacity:0;transform:translateX(-50%) translateY(10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
-.viewer-mode .editbtn,.viewer-mode .delbtn,.viewer-mode .btn-green,.viewer-mode .btn-edit{display:none!important}
+.viewer-mode .editbtn,.viewer-mode .delbtn,.viewer-mode .btn-green,.viewer-mode .btn-blue{display:none!important}
 .viewer-mode #attact,.viewer-mode #mattact{display:none!important}
-.home-btn{font-size:12px;padding:6px 12px;border:none;border-radius:6px;cursor:pointer;background:#1a3a6a;color:#fff;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
-.home-btn:hover{background:#122a50}
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
@@ -93,7 +87,7 @@ input:focus,select:focus{outline:none;border-color:#1a6fa8}
 </head>
 <body>
 <div id="toast"></div>
-<nav><a href="index.html" class="home-btn" style="margin:4px 4px 4px 6px">🏠 Αρχική</a>
+<nav>
   <button class="tab active" onclick="go(2)">✅ Παρουσιολόγιο<br><small>Προπονήσεων</small></button>
   <button class="tab" onclick="go(4)">🏆 Παρουσιολόγιο<br><small>Αγώνων</small></button>
   <button class="tab" onclick="go(0)">👥 Ρόστερ</button>
@@ -116,7 +110,7 @@ input:focus,select:focus{outline:none;border-color:#1a6fa8}
   </div>
   <div class="xbar">
     <button class="btn btn-green" onclick="exportRoster()">📥 Εξαγωγή ρόστερ</button>
-    <button id="toggleAddBtn" class="btn btn-blue btn-edit" onclick="toggleAddForm()">+ Προσθήκη</button>
+    <button class="btn btn-blue" onclick="toggleAddForm()" id="toggleAddBtn">+ Προσθήκη</button>
   </div>
   <div class="card" id="addPlayerForm" style="display:none">
     <p class="sec-title">Προσθήκη</p>
@@ -127,7 +121,7 @@ input:focus,select:focus{outline:none;border-color:#1a6fa8}
     </div>
     <div class="g2 mb"><div><div class="lbl">Χρονολογία Γέννησης</div><select id="pbirth"><option value="">— Επίλεξε —</option></select></div><div><div class="lbl">Τηλέφωνο επικοινωνίας</div><input id="pphone" type="tel" placeholder="π.χ. 6912345678"></div></div>
     <div class="mb"><div class="lbl">Σημειώσεις</div><input id="pnotes" placeholder="π.χ. Αδερφός του Παπαδόπουλου"></div>
-    <div style="text-align:right"><button class="btn btn-blue btn-edit" onclick="addPlayer()">+ Προσθήκη</button></div>
+    <div style="text-align:right"><button class="btn btn-blue" onclick="addPlayer()">+ Προσθήκη</button></div>
     <p class="err" id="perr">Συμπλήρωσε όνομα.</p>
   </div>
   <div class="epanel" id="pedit">
@@ -139,7 +133,7 @@ input:focus,select:focus{outline:none;border-color:#1a6fa8}
     </div>
     <div class="g2 mb"><div><div class="lbl">Χρονολογία Γέννησης</div><select id="epbirth"><option value="">— Επίλεξε —</option></select></div><div><div class="lbl">Τηλέφωνο επικοινωνίας</div><input id="epphone" type="tel" placeholder="π.χ. 6912345678"></div></div>
     <div class="mb"><div class="lbl">Σημειώσεις</div><input id="epnotes" placeholder="π.χ. Αδερφός του Παπαδόπουλου"></div>
-    <div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn" onclick="cancelEditPlayer()">Ακύρωση</button><button class="btn btn-blue btn-edit" onclick="saveEditPlayer()">💾 Αποθήκευση</button></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn" onclick="cancelEditPlayer()">Ακύρωση</button><button class="btn btn-blue" onclick="saveEditPlayer()">💾 Αποθήκευση</button></div>
     <hr style="margin:14px 0;border:none;border-top:1px solid #f0d080">
     <div style="margin-bottom:8px">
       <div class="lbl">↔️ Μεταφορά / Αντιγραφή σε άλλο τμήμα</div>
@@ -174,7 +168,7 @@ input:focus,select:focus{outline:none;border-color:#1a6fa8}
       </div>
     </div>
     <div class="mb"><div class="lbl">Σημειώσεις</div><input id="snotes" placeholder="π.χ. Γυμναστήριο Β"></div>
-    <div style="text-align:right"><button class="btn btn-blue btn-edit" onclick="addSession()">+ Προσθήκη</button></div>
+    <div style="text-align:right"><button class="btn btn-blue" onclick="addSession()">+ Προσθήκη</button></div>
     <p class="err" id="serr">Συμπλήρωσε θέμα.</p>
   </div>
   <div class="epanel" id="sedit">
@@ -192,7 +186,7 @@ input:focus,select:focus{outline:none;border-color:#1a6fa8}
       </div>
     </div>
     <div class="mb"><div class="lbl">Σημειώσεις</div><input id="enotes"></div>
-    <div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn" onclick="cancelEditSess()">Ακύρωση</button><button class="btn btn-blue btn-edit" onclick="saveEditSess()">💾 Αποθήκευση</button></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn" onclick="cancelEditSess()">Ακύρωση</button><button class="btn btn-blue" onclick="saveEditSess()">💾 Αποθήκευση</button></div>
   </div>
   <div id="slist"><p class="empty">Δεν έχεις καταχωρήσεις ακόμα.</p></div>
 </div>
@@ -217,9 +211,9 @@ input:focus,select:focus{outline:none;border-color:#1a6fa8}
   <div id="attact" style="display:none;gap:8px;justify-content:flex-end;margin-top:12px;flex-wrap:wrap">
     <button class="btn" onclick="window.markAll('p')">Όλοι παρόντες</button>
     <button class="btn" onclick="window.markAll('a')">Όλοι απόντες</button>
-      <p class="ok" id="attok">✓ Αποθηκεύτηκε!</p>
-<button class="btn btn-blue btn-edit" id="savebtn" onclick="saveAtt()" disabled>💾 Αποθήκευση</button>
+    <button class="btn btn-blue" id="savebtn" onclick="saveAtt()" disabled>💾 Αποθήκευση</button>
   </div>
+  <p class="ok" id="attok">✓ Αποθηκεύτηκε!</p>
 </div>
 
 <div class="sec" id="sec3">
@@ -237,7 +231,7 @@ input:focus,select:focus{outline:none;border-color:#1a6fa8}
       <div id="frange" style="display:none"><div style="display:flex;gap:8px;flex-wrap:wrap"><div><div class="lbl">Από</div><input type="date" id="ffrom" style="width:145px"></div><div><div class="lbl">Έως</div><input type="date" id="fto" style="width:145px"></div></div></div>
       <div><div class="lbl">Παίκτης</div><select id="fplayer" style="width:180px"><option value="all">Όλοι</option></select></div>
     </div>
-    <div style="display:flex;gap:8px"><button class="btn btn-blue btn-filter" onclick="renderStats()">🔍 Εφαρμογή</button><button class="btn" onclick="clearFilter()">✕ Καθαρισμός</button></div>
+    <div style="display:flex;gap:8px"><button class="btn btn-blue" onclick="renderStats()">🔍 Εφαρμογή</button><button class="btn" onclick="clearFilter()">✕ Καθαρισμός</button></div>
   </div>
   <div id="statsWrap"><p class="empty">Καταγράψτε τουλάχιστον μία προπόνηση.</p></div>
   </div>
@@ -251,7 +245,7 @@ input:focus,select:focus{outline:none;border-color:#1a6fa8}
         <div><div class="lbl">Παίκτης</div><select id="mfplayer" style="width:180px"><option value="all">Όλοι</option></select></div>
         <div><div class="lbl">Είδος</div><select id="mfkind" style="width:160px"><option value="all">Όλα</option><option value="ΕΣΚΑΝΑ">ΕΣΚΑΝΑ</option><option value="Φιλικό">Φιλικό</option><option value="ΦΕΑ">ΦΕΑ</option><option value="Κύπελλο">Κύπελλο</option><option value="Τουρνουά">Τουρνουά</option></select></div>
       </div>
-      <div style="display:flex;gap:8px"><button class="btn btn-blue btn-filter" onclick="renderMatchStats()">🔍 Εφαρμογή</button><button class="btn" onclick="clearMatchFilter()">✕ Καθαρισμός</button></div>
+      <div style="display:flex;gap:8px"><button class="btn btn-blue" onclick="renderMatchStats()">🔍 Εφαρμογή</button><button class="btn" onclick="clearMatchFilter()">✕ Καθαρισμός</button></div>
     </div>
     <div id="matchStatsWrap"><p class="empty">Δεν υπάρχουν καταγεγραμμένοι αγώνες.</p></div>
   </div>
@@ -275,23 +269,20 @@ input:focus,select:focus{outline:none;border-color:#1a6fa8}
   <div id="mattact" style="display:none;gap:8px;justify-content:flex-end;margin-top:12px;flex-wrap:wrap">
     <button class="btn" onclick="markAllMatch('p')">Όλοι παρόντες</button>
     <button class="btn" onclick="markAllMatch('a')">Όλοι απόντες</button>
-      <p class="ok" id="mattok">✓ Αποθηκεύτηκε!</p>
-<button class="btn btn-blue btn-edit" id="msavebtn" onclick="saveMatchAtt()" disabled>💾 Αποθήκευση</button>
+    <button class="btn btn-blue" id="msavebtn" onclick="saveMatchAtt()" disabled>💾 Αποθήκευση</button>
   </div>
+  <p class="ok" id="mattok">✓ Αποθηκεύτηκε!</p>
   <div id="mhistory"></div>
 </div>
 </div>
 
 <script type="module">
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-import {getAuth,onAuthStateChanged} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import {getFirestore,collection,doc,onSnapshot,setDoc,deleteDoc,getDocs} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
 const cfg={apiKey:"AIzaSyCZZnZSz8zpChx-7ScaISKehoebtO1A-qY",authDomain:"amfiali-d773b.firebaseapp.com",projectId:"amfiali-d773b",storageBucket:"amfiali-d773b.firebasestorage.app",messagingSenderId:"972320918445",appId:"1:972320918445:web:e4674ddb6b790c07efaf24"};
 const app=initializeApp(cfg);
 const db=getFirestore(app);
-const auth=getAuth(app);
-onAuthStateChanged(auth,function(user){if(!user){window.location.href='login.html';}});
 
 const CP='players',CS='andriko_sessions',CA='andriko_attendance',CM='andriko_matches';
 const OPTS=[{k:'p',l:'Παρών',bg:'#EAF3DE',c:'#3B6D11',b:'2px solid #3B6D11'},{k:'a',l:'Απών',bg:'#FCEBEB',c:'#A32D2D',b:'2px solid #A32D2D'},{k:'i',l:'Τραυματίας',bg:'#FAEEDA',c:'#854F0B',b:'2px solid #854F0B'},{k:'j',l:'Δικαιολ.',bg:'#E6F1FB',c:'#185FA5',b:'2px solid #185FA5'}];
@@ -329,12 +320,12 @@ var ALL_TEAM_COLLECTIONS=[
   {label:'Κορασίδες', col:'korasides_players'},
   {label:'Παιδικό', col:'paidiko_players'},
   {label:'Εφηβικό', col:'efiviko_players'},
-  {label:'2016-2017-2018', col:'akademies_players'},
-  {label:'Παμπαίδες 2012-2013 (2011) U15', col:'ak_2012_2013_a_players'},
-  {label:'2013-2014 (2012) U14', col:'ak_2012_2013_2014_players'},
+  {label:'2016-2019', col:'akademies_players'},
+  {label:'2010-2011 Β', col:'ak_2010_2011_players'},
+  {label:'2012-2013 Α', col:'ak_2012_2013_a_players'},
+  {label:'2012-2013-2014', col:'ak_2012_2013_2014_players'},
   {label:'2014-2015-2016', col:'ak_2014_2015_2016_players'},
-  
-  {label:'2019-2020-2021 (2018)', col:'ak_2018_2019_2020_players'},
+  {label:'2018-2019-2020', col:'ak_2018_2019_2020_players'},
   {label:'Κορίτσια Α', col:'ak_koritsia_a_players'},
   {label:'Κορίτσια Β', col:'ak_koritsia_b_players'},
 ];
@@ -588,7 +579,7 @@ function makeSegmentById(opts,curObj,pid){
 
 function renderAttForm(){
   const el=document.getElementById('attlist'),act=document.getElementById('attact');
-  if(editAttIdx<0){document.getElementById('adate').value=today();document.getElementById('atopic').value='';}
+  if(editAttIdx<0){if(!document.getElementById('adate').value)document.getElementById('adate').value=today();document.getElementById('atopic').value='';}
   if(!players.length){el.innerHTML='<p class="empty">Πρόσθεσε παίκτες στο Ρόστερ.</p>';act.style.display='none';return;}
   // Always ensure all players are in curAtt
   if(editAttIdx<0&&Object.keys(curAtt).length===0){
@@ -782,7 +773,7 @@ function renderStats(){
 
   el.innerHTML=`<div class="g3" style="margin-bottom:16px"><div class="met"><div class="met-n">${total}</div><div class="met-l">Προπονήσεις</div></div><div class="met"><div class="met-n">${avg}%</div><div class="met-l">Μέση παρουσία</div></div><div class="met"><div class="met-n">${presAvg}/${players.length}</div><div class="met-l">Παίκτες/προπόνηση</div></div></div>`
   +`<div class="card"><p class="sec-title">Παρουσίες ανά παίκτη</p>${pstats.map(p=>`<div class="prow"><div class="av">${ini(p.name)}</div><div style="flex:1;min-width:0"><div style="display:flex;flex-wrap:wrap;gap:4px;align-items:center"><span style="font-size:14px;font-weight:600">${p.name}</span><span class="ml" style="display:flex;gap:4px;flex-wrap:wrap;align-items:center"><span class="tag tg">${p.present}/${total}</span>${p.injured?'<span class="tag ta">'+p.injured+' τραυμ.</span>':''}${p.justified?'<span class="tag tb">'+p.justified+' δικαιολ.</span>':''}${p.absent?'<span class="tag tr">'+p.absent+' απών</span>':''}<span style="font-size:14px;font-weight:700;color:#1a6fa8">${p.pct}%</span></span></div><div class="pbar"><div class="pfill" style="width:${p.pct}%"></div></div></div></div>`).join('')}</div>`
-  +`<div class="card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px"><p class="sec-title" style="margin:0">Ιστορικό προπονήσεων</p><button id="_histTrainBtn" class="btn" style="font-size:12px;height:30px;padding:0 12px" onclick="window._toggleHistTrain()">▼ Εμφάνιση ιστορικού</button></div><div id="_histTrainWrap" style="display:none"></div></div>`;
+  +`<div class="card"><p class="sec-title">Ιστορικό προπονήσεων</p>${filtered.map(s=>{const cnt=Object.values(s.att||{}).filter(v=>v==='p').length;const ri=attSessions.findIndex(x=>x.id===s.id);return`<div class="prow"><div><div style="font-size:14px;font-weight:600">${s.topic}</div><div style="font-size:12px;color:#999">${fmtDateDay(s.date)}${s.snotes?' · 📝 '+s.snotes:''}</div></div><div class="ml" style="display:flex;align-items:center;gap:8px"><span class="tag ${cnt>=players.length*.7?'tg':'tr'}">${cnt}/${Object.keys(s.att||{}).length}</span><button class="editbtn" onclick="window.startEditAtt(${ri})">✏️</button><button class="delbtn" onclick="window.delAtt('${s.id}')">🗑️</button></div></div>`;}).join('')}</div>`;
 
   // Player detail view when specific player selected
   if(filterP!==null&&pstats.length>0){
@@ -894,8 +885,8 @@ function renderMatchStats(){
     ${pstats.map(p=>`<div class="prow"><div class="av">${ini(p.name)}</div><div style="flex:1;min-width:0"><div style="display:flex;flex-wrap:wrap;gap:4px;align-items:center"><span style="font-size:14px;font-weight:600">${p.name}</span><span class="ml" style="display:flex;gap:4px;align-items:center"><span class="tag tg">${p.present}/${total}</span>${p.absent?'<span class="tag tr">'+p.absent+' απών</span>':''}<span style="font-size:14px;font-weight:700;color:#1a6fa8">${p.pct}%</span></span></div><div class="pbar"><div class="pfill" style="width:${p.pct}%"></div></div></div></div>`).join('')}
   </div>
   <div class="card">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px"><p class="sec-title" style="margin:0">Ιστορικό αγώνων</p><button id="_histMatchBtn" class="btn" style="font-size:12px;height:30px;padding:0 12px" onclick="window._toggleHistMatch()">▼ Εμφάνιση ιστορικού</button></div>
-    <div id="_histMatchWrap" style="display:none"></div>
+    <p class="sec-title">Ιστορικό αγώνων</p>
+    ${filtered.map(s=>{const cnt=Object.values(s.att||{}).filter(v=>v==='p').length;const mi=matchSessions.findIndex(x=>x.id===s.id);return`<div class="prow"><div><div style="font-size:14px;font-weight:600">${s.location==='home'?'🏠':'✈️'} ${s.opponent}</div><div style="font-size:12px;color:#999">${fmtDate(s.date)}${s.mkind?' · '+s.mkind:''}${s.result?' · '+s.result:''}</div></div><div class="ml" style="display:flex;align-items:center;gap:6px"><span class="tag ${cnt>=players.length*.7?'tg':'tr'}">${cnt}/${Object.keys(s.att||{}).length}</span><button class="editbtn" onclick="window.editMatchAtt(${mi})">✏️</button><button class="delbtn" onclick="window.delMatchAtt('${s.id}')">🗑️</button></div></div>`;}).join('')}
   </div>`;
 }
 
@@ -1009,136 +1000,6 @@ window.exportTeam=async function(){
     XLSX.writeFile(wb,teamName+'_'+new Date().toISOString().slice(0,10)+'.xlsx');
   }catch(e){alert('Σφάλμα εξαγωγής: '+e.message);}
 };
-
-// ---- History toggle + month chips ----
-window._histTrainMonth='all';
-window._histMatchMonth='all';
-
-window._getHistMonths=function(sessions){
-  var months=[];
-  sessions.forEach(function(s){
-    var m=(s.date||'').substring(0,7);
-    if(m&&months.indexOf(m)===-1)months.push(m);
-  });
-  months.sort(function(a,b){return b>a?1:-1;});
-  return months;
-};
-
-window._monthLabel=function(m){
-  if(!m)return m;
-  var parts=m.split('-');
-  var year=parts[0];var mon=parseInt(parts[1],10);
-  var names=['','Ιαν','Φεβ','Μαρ','Απρ','Μαϊ','Ιουν','Ιουλ','Αυγ','Σεπ','Οκτ','Νοε','Δεκ'];
-  return (names[mon]||mon)+' '+year;
-};
-
-window._renderHistChips=function(containerId,months,curMonth,onClickFn){
-  var c=document.getElementById(containerId);
-  if(!c)return;
-  var chips='<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px">';
-  var allActive=curMonth==='all'?'background:#1a3a6a;color:#fff;':'';
-  chips+='<button class="filter-btn'+(curMonth==='all'?' active':'')+'" onclick="'+onClickFn+'(\'all\')" style="font-size:11px;height:26px;padding:0 10px">Όλα</button>';
-  months.forEach(function(m){
-    var active=curMonth===m?' active':'';
-    chips+='<button class="filter-btn'+active+'" onclick="'+onClickFn+'(\''+m+'\')" style="font-size:11px;height:26px;padding:0 10px">'+window._monthLabel(m)+'</button>';
-  });
-  chips+='</div>';
-  return chips;
-};
-
-window._renderHistTrainBlock=function(){
-  var wrap=document.getElementById('_histTrainWrap');
-  if(!wrap)return;
-  var months=window._getHistMonths(attSessions);
-  var cur=window._histTrainMonth;
-  var sessions=cur==='all'?attSessions:attSessions.filter(function(s){return (s.date||'').substring(0,7)===cur;});
-  var chipsHtml=window._renderHistChips('_histTrainChipsWrap',months,cur,'window._setHistTrainMonth')||'';
-  var rows=sessions.map(function(s){
-    var attCount=Object.values(s.att||{}).filter(function(v){return v==='p';}).length;
-    var idx=attSessions.indexOf(s);
-    return '<div class="prow"><div style="flex:1"><div style="font-size:13px;font-weight:600">'+s.topic+'</div>'
-      +'<div style="font-size:11px;color:#999">'+fmtDate(s.date)+(s.snotes?' · '+s.snotes:'')+'</div></div>'
-      +'<div class="ml" style="display:flex;align-items:center;gap:6px"><span class="tag tg">'+attCount+'/'+players.length+'</span>'
-      +'<button class="editbtn" onclick="window.startEditAtt('+idx+')">✏️</button>'
-      +'<button class="delbtn" onclick="window.delAtt(\''+s.id+'\')"  >🗑️</button></div></div>';
-  }).join('');
-  wrap.innerHTML='<div id="_histTrainChipsWrap"></div>'+(rows||'<p class="empty" style="margin:8px 0">Δεν υπάρχουν προπονήσεις.</p>');
-  // now render chips inside
-  var chipsContainer=document.getElementById('_histTrainChipsWrap');
-  if(chipsContainer){
-    var chips='<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px">';
-    chips+='<button class="filter-btn'+(cur==='all'?' active':'')+'" onclick="window._setHistTrainMonth(\'all\')" style="font-size:11px;height:26px;padding:0 10px">Όλα</button>';
-    months.forEach(function(m){chips+='<button class="filter-btn'+(cur===m?' active':'')+'" onclick="window._setHistTrainMonth(\''+m+'\')" style="font-size:11px;height:26px;padding:0 10px">'+window._monthLabel(m)+'</button>';});
-    chips+='</div>';
-    chipsContainer.innerHTML=chips;
-  }
-};
-
-window._renderHistMatchBlock=function(){
-  var wrap=document.getElementById('_histMatchWrap');
-  if(!wrap)return;
-  var months=window._getHistMonths(matchSessions);
-  var cur=window._histMatchMonth;
-  var sessions=cur==='all'?matchSessions:matchSessions.filter(function(s){return (s.date||'').substring(0,7)===cur;});
-  var rows=sessions.map(function(s){
-    var attCount=Object.values(s.att||{}).filter(function(v){return v==='p';}).length;
-    var kindLbl=s.mkind==='friendly'?'Φιλικός':s.mkind==='championship'?'Πρωτάθλημα':s.mkind==='cup'?'Κύπελλο':(s.mkind||'');
-    var idx=matchSessions.indexOf(s);
-    return '<div class="prow"><div style="flex:1"><div style="font-size:13px;font-weight:600">'+(s.opponent?'εναντίον '+s.opponent:'Αγώνας')+'</div>'
-      +'<div style="font-size:11px;color:#999">'+fmtDate(s.date)+(kindLbl?' · '+kindLbl:'')+(s.result?' · '+s.result:'')+'</div></div>'
-      +'<div class="ml" style="display:flex;align-items:center;gap:6px"><span class="tag tg">'+attCount+'/'+players.length+'</span>'
-      +'<button class="editbtn" onclick="window.editMatchAtt('+idx+')">✏️</button>'
-      +'<button class="delbtn" onclick="window.delMatchAtt(\''+s.id+'\')"  >🗑️</button></div></div>';
-  }).join('');
-  wrap.innerHTML='<div id="_histMatchChipsWrap"></div>'+(rows||'<p class="empty" style="margin:8px 0">Δεν υπάρχουν αγώνες.</p>');
-  var chipsContainer=document.getElementById('_histMatchChipsWrap');
-  if(chipsContainer){
-    var chips='<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px">';
-    chips+='<button class="filter-btn'+(cur==='all'?' active':'')+'" onclick="window._setHistMatchMonth(\'all\')" style="font-size:11px;height:26px;padding:0 10px">Όλα</button>';
-    months.forEach(function(m){chips+='<button class="filter-btn'+(cur===m?' active':'')+'" onclick="window._setHistMatchMonth(\''+m+'\')" style="font-size:11px;height:26px;padding:0 10px">'+window._monthLabel(m)+'</button>';});
-    chips+='</div>';
-    chipsContainer.innerHTML=chips;
-  }
-};
-
-window._setHistTrainMonth=function(m){
-  window._histTrainMonth=m;
-  window._renderHistTrainBlock();
-};
-
-window._setHistMatchMonth=function(m){
-  window._histMatchMonth=m;
-  window._renderHistMatchBlock();
-};
-
-window._toggleHistTrain=function(){
-  var wrap=document.getElementById('_histTrainWrap');
-  var btn=document.getElementById('_histTrainBtn');
-  if(!wrap||!btn)return;
-  if(wrap.style.display==='none'){
-    wrap.style.display='block';
-    btn.textContent='▲ Απόκρυψη ιστορικού';
-    window._renderHistTrainBlock();
-  }else{
-    wrap.style.display='none';
-    btn.textContent='▼ Εμφάνιση ιστορικού';
-  }
-};
-
-window._toggleHistMatch=function(){
-  var wrap=document.getElementById('_histMatchWrap');
-  var btn=document.getElementById('_histMatchBtn');
-  if(!wrap||!btn)return;
-  if(wrap.style.display==='none'){
-    wrap.style.display='block';
-    btn.textContent='▲ Απόκρυψη ιστορικού';
-    window._renderHistMatchBlock();
-  }else{
-    wrap.style.display='none';
-    btn.textContent='▼ Εμφάνιση ιστορικού';
-  }
-};
-// ---- End history toggle ----
 </script>
 </body>
 </html>
