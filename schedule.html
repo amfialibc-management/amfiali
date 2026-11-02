@@ -513,9 +513,9 @@ function renderMatches(){
           +'<div style="margin-bottom:3px">'
           +'<span style="font-size:12px;font-weight:800;color:#6c3483">'+(m.weekend||m.day||'')+'</span>'
           +(m.time?' <span style="font-size:12px;font-weight:800;color:#6c3483"> '+m.time+'</span>':'')
+          +(m.location!=='away'?' <span style="font-size:12px;font-weight:800;background:#1565c0;color:#fff;padding:2px 10px;border-radius:5px;margin-left:6px;letter-spacing:0.3px">Εντός</span>':' <span style="font-size:12px;font-weight:800;background:#b71c1c;color:#fff;padding:2px 10px;border-radius:5px;margin-left:6px;letter-spacing:0.3px">Εκτός</span>')
           +'</div>'
           +'<div class="match-title"><span style="color:#6c3483;font-weight:800">'+(m.category||'')+'</span> <span class="'+tagCls2+'" style="font-size:10px;padding:2px 6px">'+m.type+'</span>'
-          +(m.location!=='away'?'<span style="font-size:12px;font-weight:800;background:#1565c0;color:#fff;padding:2px 10px;border-radius:5px;margin-left:6px;letter-spacing:0.3px">Εντός</span>':'<span style="font-size:12px;font-weight:800;background:#b71c1c;color:#fff;padding:2px 10px;border-radius:5px;margin-left:6px;letter-spacing:0.3px">Εκτός</span>')
           +'</div>'
           +(m.opponent?'<div class="match-info">vs '+m.opponent+'</div>':'')
           +(m.location==='home'&&m.venueType?'<div class="match-info">'+m.venueType+'</div>':'')
@@ -794,8 +794,8 @@ function renderPendingList(){
         :'<span style="font-size:12px;font-weight:800;background:#b71c1c;color:#fff;padding:2px 10px;border-radius:5px;margin-left:6px;letter-spacing:0.3px">Εκτός</span>';
       html+='<div style="background:#faf5ff;border:1px solid #d8b4fe;border-radius:8px;padding:10px 12px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:flex-start">';
       html+='<div>';
-      html+='<div style="font-size:12px;font-weight:700;color:#6c3483">'+(m.weekend||m.day||'')+(m.time?' · '+m.time:'')+'</div>';
-      html+='<div style="font-size:13px;font-weight:700;color:#222;margin:2px 0">'+(m.category||'')+' <span style="font-size:11px;font-weight:700;background:#6c3483;color:#fff;padding:1px 6px;border-radius:4px">'+(m.type||'')+'</span>'+locBadge+'</div>';
+      html+='<div style="font-size:12px;font-weight:700;color:#6c3483">'+(m.weekend||m.day||'')+(m.time?' · '+m.time:'')+locBadge+'</div>';
+      html+='<div style="font-size:13px;font-weight:700;color:#222;margin:2px 0">'+(m.category||'')+' <span style="font-size:11px;font-weight:700;background:#6c3483;color:#fff;padding:1px 6px;border-radius:4px">'+(m.type||'')+'</span></div>';
       if(m.opponent)html+='<div style="font-size:12px;color:#555">vs '+m.opponent+'</div>';
       html+='<div style="font-size:11px;color:#888;margin-top:2px">'+(venue||'')+'</div>';
       if(m.notes)html+='<div style="font-size:11px;color:#aaa;margin-top:2px;font-style:italic">'+m.notes+'</div>';
