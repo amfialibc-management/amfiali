@@ -230,7 +230,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#1a3a6a}
           </div>
           <div class="field">
             <div class="lbl">Κατηγορία</div>
-            <select id="pCategory">
+            <select id="pCategory" onchange="document.getElementById('pCategoryCustomWrap').style.display=this.value==='__other__'?'block':'none'">
               <option value="Ανδρικό">Ανδρικό</option>
               <option value="Εφηβικό">Εφηβικό</option>
               <option value="Κορασίδες">Κορασίδες</option>
@@ -243,7 +243,11 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#1a3a6a}
               <option value="2019-2020-2021 (2018)">Ακαδ. 2019-2020-2021 (2018)</option>
               <option value="Κορίτσια Α">Ακαδ. Κορίτσια Α</option>
               <option value="Κορίτσια Β">Ακαδ. Κορίτσια Β</option>
+              <option value="__other__">Ορισμός κατηγορίας...</option>
             </select>
+            <div id="pCategoryCustomWrap" style="display:none;margin-top:6px">
+              <input id="pCategoryCustom" placeholder="Κατηγορία αγώνα..." style="width:100%">
+            </div>
           </div>
         </div>
         <div class="field">
@@ -822,6 +826,8 @@ function clearPendingForm(){
   document.getElementById('pTime').value='';
   document.getElementById('pType').value='ΕΣΚΑΝΑ';
   document.getElementById('pCategory').value='Ανδρικό';
+  document.getElementById('pCategoryCustomWrap').style.display='none';
+  document.getElementById('pCategoryCustom').value='';
   document.getElementById('pOpponent').value='';
   document.getElementById('pLocation').value='home';
   document.getElementById('pNotes').value='';
@@ -865,7 +871,7 @@ window.savePendingMatch=async function(){
     day:document.getElementById('pDay').value,
     time:document.getElementById('pTime').value,
     type:document.getElementById('pType').value,
-    category:document.getElementById('pCategory').value,
+    category:(document.getElementById('pCategory').value==='__other__'?document.getElementById('pCategoryCustom').value.trim():document.getElementById('pCategory').value),
     opponent:document.getElementById('pOpponent').value,
     location:loc,
     notes:document.getElementById('pNotes').value
@@ -892,7 +898,19 @@ window.editPendingMatch=function(id){
   document.getElementById('pDay').value=m.day||'Σάββατο';
   document.getElementById('pTime').value=m.time||'';
   document.getElementById('pType').value=m.type||'ΕΣΚΑΝΑ';
-  document.getElementById('pCategory').value=m.category||'Ανδρικό';
+  var pCatSel=document.getElementById('pCategory');
+  var pCatCustomWrap=document.getElementById('pCategoryCustomWrap');
+  var pCatCustom=document.getElementById('pCategoryCustom');
+  var knownCats=Array.from(pCatSel.options).map(function(o){return o.value;}).filter(function(v){return v!=='__other__';});
+  if(m.category&&knownCats.indexOf(m.category)===-1){
+    pCatSel.value='__other__';
+    pCatCustom.value=m.category;
+    pCatCustomWrap.style.display='block';
+  }else{
+    pCatSel.value=m.category||'Ανδρικό';
+    pCatCustom.value='';
+    pCatCustomWrap.style.display='none';
+  }
   document.getElementById('pOpponent').value=m.opponent||'';
   document.getElementById('pLocation').value=m.location||'home';
   document.getElementById('pNotes').value=m.notes||'';
