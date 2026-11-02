@@ -785,14 +785,17 @@ function renderPendingList(){
     html+='<div style="margin-bottom:12px">';
     html+='<div style="font-size:12px;font-weight:800;color:#6c3483;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;padding:4px 8px;background:#f3e8ff;border-radius:6px">📅 '+wk+'</div>';
     groups[wk].forEach(function(m){
-      var loc=m.location==='away'?'Εκτός έδρας':'Εντός έδρας';
-      var venue=m.location==='home'?(m.venueType||''):(m.venue||'');
+      var isHome=m.location!=='away';
+      var venue=isHome?(m.venueType||''):(m.venue||'');
+      var locBadge=isHome
+        ?'<span style="font-size:10px;font-weight:700;background:#1a3a6a;color:#fff;padding:1px 7px;border-radius:4px;margin-left:4px">Εντός</span>'
+        :'<span style="font-size:10px;font-weight:700;background:#666;color:#fff;padding:1px 7px;border-radius:4px;margin-left:4px">Εκτός</span>';
       html+='<div style="background:#faf5ff;border:1px solid #d8b4fe;border-radius:8px;padding:10px 12px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:flex-start">';
       html+='<div>';
       html+='<div style="font-size:12px;font-weight:700;color:#6c3483">'+(m.weekend||m.day||'')+(m.time?' · '+m.time:'')+'</div>';
-      html+='<div style="font-size:13px;font-weight:700;color:#222;margin:2px 0">'+(m.category||'')+' <span style="font-size:11px;font-weight:700;background:#6c3483;color:#fff;padding:1px 6px;border-radius:4px">'+(m.type||'')+'</span></div>';
+      html+='<div style="font-size:13px;font-weight:700;color:#222;margin:2px 0">'+(m.category||'')+' <span style="font-size:11px;font-weight:700;background:#6c3483;color:#fff;padding:1px 6px;border-radius:4px">'+(m.type||'')+'</span>'+locBadge+'</div>';
       if(m.opponent)html+='<div style="font-size:12px;color:#555">vs '+m.opponent+'</div>';
-      html+='<div style="font-size:11px;color:#888;margin-top:2px">'+loc+(venue?' · '+venue:'')+'</div>';
+      html+='<div style="font-size:11px;color:#888;margin-top:2px">'+(venue||'')+'</div>';
       if(m.notes)html+='<div style="font-size:11px;color:#aaa;margin-top:2px;font-style:italic">'+m.notes+'</div>';
       html+='</div>';
       html+='<div style="display:flex;gap:4px;flex-shrink:0;margin-left:8px">';
@@ -934,18 +937,35 @@ window.deletePendingMatch=async function(id){
 
 // ===== PROMOTE PENDING -> WEEKLY =====
 var promoteId=null;
+function togglePromoteLocation(){
+  var loc=document.getElementById('promoteLocation').value;
+  document.getElementById('promoteHomeFields').style.display=loc==='home'?'block':'none';
+  document.getElementById('promoteAwayFields').style.display=loc==='away'?'grid':'none';
+}
 window.promotePendingMatch=function(id){
   var m=pendingMatches.find(function(x){return x.id===id;});
   if(!m)return;
   promoteId=id;
-  // Προ-συμπλήρωσε τα πεδία modal
   document.getElementById('promoteDate').value='';
   document.getElementById('promoteTime').value=m.time||'';
   document.getElementById('promoteType').value=m.type||'ΕΣΚΑΝΑ';
-  document.getElementById('promoteCategory').textContent=m.category||'';
-  document.getElementById('promoteOpponent').textContent=m.opponent||'';
-  document.getElementById('promoteLocation').textContent=m.location==='home'?'Εντός έδρας':'Εκτός έδρας';
-  document.getElementById('promoteVenue').textContent=m.location==='home'?(m.venueType||''):(m.venue||'');
+  // category
+  var catSel=document.getElementById('promoteCategory');
+  var catOpts=Array.from(catSel.options).map(function(o){return o.value;});
+  if(catOpts.indexOf(m.category||'')!==-1)catSel.value=m.category;
+  else catSel.value='Ανδρικό';
+  document.getElementById('promoteOpponent').value=m.opponent||'';
+  document.getElementById('promoteLocation').value=m.location||'home';
+  togglePromoteLocation();
+  if(m.location==='home'){
+    var vt=document.getElementById('promoteVenueType');
+    var vtOpts=Array.from(vt.options).map(function(o){return o.value;});
+    if(vtOpts.indexOf(m.venueType||'')!==-1)vt.value=m.venueType;
+  }else{
+    document.getElementById('promoteVenue').value=m.venue||'';
+    document.getElementById('promoteAddress').value=m.address||'';
+  }
+  document.getElementById('promoteNotes').value=m.notes||'';
   document.getElementById('promoteModal').style.display='flex';
 };
 window.closePromoteModal=function(){
@@ -954,23 +974,23 @@ window.closePromoteModal=function(){
 };
 var GR_DAYS=['Κυριακή','Δευτέρα','Τρίτη','Τετάρτη','Πέμπτη','Παρασκευή','Σάββατο'];
 window.confirmPromote=async function(){
-  var m=pendingMatches.find(function(x){return x.id===promoteId;});
-  if(!m){closePromoteModal();return;}
+  if(!promoteId)return;
   var date=document.getElementById('promoteDate').value;
   if(!date){alert('Βάλε ημερομηνία.');return;}
   var dayName=GR_DAYS[new Date(date+'T00:00:00').getDay()];
+  var loc=document.getElementById('promoteLocation').value;
   var data={
     date:date,
     day:dayName,
     time:document.getElementById('promoteTime').value,
     type:document.getElementById('promoteType').value,
-    category:m.category||'',
-    opponent:m.opponent||'',
-    location:m.location||'home',
-    venueType:m.location==='home'?(m.venueType||''):'',
-    venue:m.location==='away'?(m.venue||''):'',
-    address:m.location==='away'?(m.address||''):'',
-    notes:m.notes||''
+    category:document.getElementById('promoteCategory').value,
+    opponent:document.getElementById('promoteOpponent').value.trim(),
+    location:loc,
+    venueType:loc==='home'?document.getElementById('promoteVenueType').value:'',
+    venue:loc==='away'?document.getElementById('promoteVenue').value.trim():'',
+    address:loc==='away'?document.getElementById('promoteAddress').value.trim():'',
+    notes:document.getElementById('promoteNotes').value.trim()
   };
   try{
     await db.collection('weekly_schedule').add(data);
@@ -981,30 +1001,76 @@ window.confirmPromote=async function(){
 </script>
 
 <!-- PROMOTE MODAL -->
-<div id="promoteModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;align-items:center;justify-content:center;padding:16px">
-  <div style="background:#fff;border-radius:14px;padding:20px;width:100%;max-width:400px;box-shadow:0 8px 32px rgba(0,0,0,.2)">
-    <div style="font-size:15px;font-weight:700;color:#166534;margin-bottom:4px">✅ Προγραμματίστηκε!</div>
-    <div style="font-size:12px;color:#666;margin-bottom:14px">Βάλε ημερομηνία και ο αγώνας θα μεταφερθεί στο κανονικό πρόγραμμα.</div>
-    <div style="background:#f0fdf4;border-radius:8px;padding:10px 12px;margin-bottom:14px;font-size:13px">
-      <div><strong>Κατηγορία:</strong> <span id="promoteCategory"></span></div>
-      <div><strong>Αντίπαλος:</strong> <span id="promoteOpponent"></span></div>
-      <div><strong>Γήπεδο:</strong> <span id="promoteLocation"></span> — <span id="promoteVenue"></span></div>
-    </div>
-    <div style="display:grid;gap:8px">
-      <div>
-        <label style="font-size:11px;font-weight:600;color:#555">ΗΜΕΡΟΜΗΝΙΑ *</label>
-        <input type="date" id="promoteDate" style="width:100%;margin-top:3px">
+<div id="promoteModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto">
+  <div style="background:#fff;border-radius:14px;padding:20px;width:100%;max-width:420px;box-shadow:0 8px 32px rgba(0,0,0,.2);margin:auto">
+    <div style="font-size:15px;font-weight:700;color:#166534;margin-bottom:2px">✅ Προγραμματίστηκε!</div>
+    <div style="font-size:12px;color:#666;margin-bottom:14px">Συμπλήρωσε τα στοιχεία για να μεταφερθεί στο κανονικό πρόγραμμα.</div>
+    <input type="hidden" id="promoteDay">
+    <div style="display:grid;gap:10px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div>
+          <div class="lbl">Ημερομηνία *</div>
+          <input type="date" id="promoteDate" style="width:100%">
+        </div>
+        <div>
+          <div class="lbl">Ώρα</div>
+          <input type="time" id="promoteTime" style="width:100%">
+        </div>
       </div>
       <div>
-        <label style="font-size:11px;font-weight:600;color:#555">ΩΡΑ</label>
-        <input type="time" id="promoteTime" style="width:100%;margin-top:3px">
-      </div>
-      <input type="hidden" id="promoteDay">
-      <div>
-        <label style="font-size:11px;font-weight:600;color:#555">ΕΙΔΟΣ</label>
-        <select id="promoteType" style="width:100%;margin-top:3px">
+        <div class="lbl">Είδος</div>
+        <select id="promoteType" style="width:100%">
           <option>ΕΣΚΑΝΑ</option><option>ΦΕΑ</option><option>ΦΕΑ (Γιατρός)</option><option>Φιλικό</option>
         </select>
+      </div>
+      <div>
+        <div class="lbl">Κατηγορία</div>
+        <select id="promoteCategory" style="width:100%">
+          <option value="Ανδρικό">Ανδρικό</option>
+          <option value="Εφηβικό">Εφηβικό</option>
+          <option value="Κορασίδες">Κορασίδες</option>
+          <option value="Νεανίδες">Νεανίδες</option>
+          <option value="Παιδικό">Παιδικό</option>
+          <option value="Παμπαίδες 2012-2013 (2011) U15">Παμπαίδες 2012-2013 (2011) U15</option>
+          <option value="2013-2014 (2012) U14">Ακαδ. 2013-2014 (2012) U14</option>
+          <option value="2014-2015-2016">Ακαδ. 2014-2015-2016</option>
+          <option value="2016-2017-2018">Ακαδ. 2016-2017-2018</option>
+          <option value="2019-2020-2021 (2018)">Ακαδ. 2019-2020-2021 (2018)</option>
+          <option value="Κορίτσια Α">Ακαδ. Κορίτσια Α</option>
+          <option value="Κορίτσια Β">Ακαδ. Κορίτσια Β</option>
+        </select>
+      </div>
+      <div>
+        <div class="lbl">Αντίπαλος</div>
+        <input id="promoteOpponent" style="width:100%" placeholder="Αντίπαλος">
+      </div>
+      <div>
+        <div class="lbl">Έδρα</div>
+        <select id="promoteLocation" onchange="togglePromoteLocation()" style="width:100%">
+          <option value="home">Εντός έδρας</option>
+          <option value="away">Εκτός έδρας</option>
+        </select>
+      </div>
+      <div id="promoteHomeFields">
+        <div class="lbl">Γήπεδο</div>
+        <select id="promoteVenueType" style="width:100%">
+          <option value="Ανοιχτό Σιταποθηκών">Ανοιχτό Σιταποθηκών</option>
+          <option value="Κλειστό Σιταποθηκών">Κλειστό Σιταποθηκών</option>
+        </select>
+      </div>
+      <div id="promoteAwayFields" style="display:none;display:grid;gap:8px">
+        <div>
+          <div class="lbl">Γήπεδο αντιπάλου</div>
+          <input id="promoteVenue" style="width:100%" placeholder="π.χ. Κλειστό Χαλανδρίου">
+        </div>
+        <div>
+          <div class="lbl">Διεύθυνση</div>
+          <input id="promoteAddress" style="width:100%" placeholder="π.χ. Λεωφ. Πεντέλης 10">
+        </div>
+      </div>
+      <div>
+        <div class="lbl">Σημειώσεις</div>
+        <input id="promoteNotes" style="width:100%" placeholder="Προαιρετικά...">
       </div>
     </div>
     <div style="display:flex;gap:8px;margin-top:16px">
