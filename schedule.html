@@ -514,7 +514,9 @@ function renderMatches(){
           +'<span style="font-size:12px;font-weight:800;color:#6c3483">'+(m.weekend||m.day||'')+'</span>'
           +(m.time?' <span style="font-size:12px;font-weight:800;color:#6c3483"> '+m.time+'</span>':'')
           +'</div>'
-          +'<div class="match-title"><span style="color:#6c3483;font-weight:800">'+(m.category||'')+'</span> <span class="'+tagCls2+'" style="font-size:10px;padding:2px 6px">'+m.type+'</span></div>'
+          +'<div class="match-title"><span style="color:#6c3483;font-weight:800">'+(m.category||'')+'</span> <span class="'+tagCls2+'" style="font-size:10px;padding:2px 6px">'+m.type+'</span>'
+          +(m.location!=='away'?'<span style="font-size:10px;font-weight:700;background:#1a3a6a;color:#fff;padding:1px 7px;border-radius:4px;margin-left:4px">Εντός</span>':'<span style="font-size:10px;font-weight:700;background:#555;color:#fff;padding:1px 7px;border-radius:4px;margin-left:4px">Εκτός</span>')
+          +'</div>'
           +(m.opponent?'<div class="match-info">vs '+m.opponent+'</div>':'')
           +(m.location==='home'&&m.venueType?'<div class="match-info">'+m.venueType+'</div>':'')
           +(m.location==='away'&&m.venue?'<div class="match-info">'+m.venue+'</div>':'')
