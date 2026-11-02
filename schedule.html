@@ -201,7 +201,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#1a3a6a}
           </div>
         </div>
         <div class="g2">
-          <div class="field">
+          <div class="field" style="display:none">
             <div class="lbl">Ημέρα</div>
             <select id="pDay">
               <option value="Σάββατο">Σάββατο</option>
@@ -511,7 +511,7 @@ function renderMatches(){
         var tagCls2=m.type==='ΕΣΚΑΝΑ'?'tag-eskanа':(m.type==='ΦΕΑ'||m.type==='ΦΕΑ (Γιατρός)')?'tag-fea':'tag-filiko';
         pendingHtml+='<div class="match-card" style="border-left:4px solid #a855f7;background:#faf5ff;border-color:#d8b4fe">'
           +'<div style="margin-bottom:3px">'
-          +'<span style="font-size:12px;font-weight:800;color:#6c3483">'+(m.day||'')+'</span>'
+          +'<span style="font-size:12px;font-weight:800;color:#6c3483">'+(m.weekend||m.day||'')+'</span>'
           +(m.time?' <span style="font-size:12px;font-weight:800;color:#6c3483"> '+m.time+'</span>':'')
           +'</div>'
           +'<div class="match-title"><span style="color:#6c3483;font-weight:800">'+(m.category||'')+'</span> <span class="'+tagCls2+'" style="font-size:10px;padding:2px 6px">'+m.type+'</span></div>'
@@ -789,7 +789,7 @@ function renderPendingList(){
       var venue=m.location==='home'?(m.venueType||''):(m.venue||'');
       html+='<div style="background:#faf5ff;border:1px solid #d8b4fe;border-radius:8px;padding:10px 12px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:flex-start">';
       html+='<div>';
-      html+='<div style="font-size:12px;font-weight:700;color:#6c3483">'+(m.day||'')+(m.time?' · '+m.time:'')+'</div>';
+      html+='<div style="font-size:12px;font-weight:700;color:#6c3483">'+(m.weekend||m.day||'')+(m.time?' · '+m.time:'')+'</div>';
       html+='<div style="font-size:13px;font-weight:700;color:#222;margin:2px 0">'+(m.category||'')+' <span style="font-size:11px;font-weight:700;background:#6c3483;color:#fff;padding:1px 6px;border-radius:4px">'+(m.type||'')+'</span></div>';
       if(m.opponent)html+='<div style="font-size:12px;color:#555">vs '+m.opponent+'</div>';
       html+='<div style="font-size:11px;color:#888;margin-top:2px">'+loc+(venue?' · '+venue:'')+'</div>';
@@ -940,7 +940,6 @@ window.promotePendingMatch=function(id){
   promoteId=id;
   // Προ-συμπλήρωσε τα πεδία modal
   document.getElementById('promoteDate').value='';
-  document.getElementById('promoteDay').value=m.day||'Σάββατο';
   document.getElementById('promoteTime').value=m.time||'';
   document.getElementById('promoteType').value=m.type||'ΕΣΚΑΝΑ';
   document.getElementById('promoteCategory').textContent=m.category||'';
@@ -953,14 +952,16 @@ window.closePromoteModal=function(){
   document.getElementById('promoteModal').style.display='none';
   promoteId=null;
 };
+var GR_DAYS=['Κυριακή','Δευτέρα','Τρίτη','Τετάρτη','Πέμπτη','Παρασκευή','Σάββατο'];
 window.confirmPromote=async function(){
   var m=pendingMatches.find(function(x){return x.id===promoteId;});
   if(!m){closePromoteModal();return;}
   var date=document.getElementById('promoteDate').value;
   if(!date){alert('Βάλε ημερομηνία.');return;}
+  var dayName=GR_DAYS[new Date(date+'T00:00:00').getDay()];
   var data={
     date:date,
-    day:document.getElementById('promoteDay').value,
+    day:dayName,
     time:document.getElementById('promoteTime').value,
     type:document.getElementById('promoteType').value,
     category:m.category||'',
@@ -994,19 +995,11 @@ window.confirmPromote=async function(){
         <label style="font-size:11px;font-weight:600;color:#555">ΗΜΕΡΟΜΗΝΙΑ *</label>
         <input type="date" id="promoteDate" style="width:100%;margin-top:3px">
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-        <div>
-          <label style="font-size:11px;font-weight:600;color:#555">ΗΜΕΡΑ</label>
-          <select id="promoteDay" style="width:100%;margin-top:3px">
-            <option>Δευτέρα</option><option>Τρίτη</option><option>Τετάρτη</option>
-            <option>Πέμπτη</option><option>Παρασκευή</option><option>Σάββατο</option><option>Κυριακή</option>
-          </select>
-        </div>
-        <div>
-          <label style="font-size:11px;font-weight:600;color:#555">ΩΡΑ</label>
-          <input type="time" id="promoteTime" style="width:100%;margin-top:3px">
-        </div>
+      <div>
+        <label style="font-size:11px;font-weight:600;color:#555">ΩΡΑ</label>
+        <input type="time" id="promoteTime" style="width:100%;margin-top:3px">
       </div>
+      <input type="hidden" id="promoteDay">
       <div>
         <label style="font-size:11px;font-weight:600;color:#555">ΕΙΔΟΣ</label>
         <select id="promoteType" style="width:100%;margin-top:3px">
