@@ -285,7 +285,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#1a3a6a}
         </div>
         <div style="display:flex;gap:8px">
           <button class="btn btn-blue" onclick="savePendingMatch()" style="background:#6c3483">💾 Αποθήκευση</button>
-          <button class="btn btn-gray" onclick="clearPendingForm()">✕ Ακύρωση</button>
+          <button class="btn btn-gray" onclick="clearPendingForm();document.getElementById('pendingAddFormCard').style.display='none'">✕ Ακύρωση</button>
         </div>
       </div>
     </div>
@@ -499,12 +499,11 @@ function renderMatches(){
       pendingHtml+='<div style="grid-column:1/-1;font-size:11px;font-weight:800;color:#6c3483;text-transform:uppercase;letter-spacing:0.5px;margin:4px 0 4px;padding:3px 10px;background:#f3e8ff;border-radius:6px;display:inline-block">📅 '+wk+'</div>';
       pendingGroups[wk].forEach(function(m){
         var pAdminBtns=pendingAdminBtns
-          ?'<button style="font-size:10px;height:20px;padding:0 6px;border-radius:4px;border:1px solid #d8b4fe;background:#f3e8ff;color:#6c3483;cursor:pointer" data-id="'+m.id+'" onclick="editPendingMatch(this.dataset.id)">✏️</button>'
+          ?'<button style="font-size:10px;height:20px;padding:0 6px;border-radius:4px;border:1px solid #bbf7d0;background:#dcfce7;color:#166534;cursor:pointer;font-weight:700" data-id="'+m.id+'" onclick="promotePendingMatch(this.dataset.id)">✅</button>'
+           +'<button style="font-size:10px;height:20px;padding:0 6px;border-radius:4px;border:1px solid #d8b4fe;background:#f3e8ff;color:#6c3483;cursor:pointer" data-id="'+m.id+'" onclick="editPendingMatch(this.dataset.id)">✏️</button>'
            +'<button style="font-size:10px;height:20px;padding:0 6px;border-radius:4px;border:1px solid #fca5a5;background:#f8d7da;color:#721c24;cursor:pointer" data-id="'+m.id+'" onclick="deletePendingMatch(this.dataset.id)">🗑</button>'
           :'';
-        var pPromoteBtn=pendingAdminBtns
-          ?'<div style="margin-top:8px"><button data-id="'+m.id+'" onclick="promotePendingMatch(this.dataset.id)" style="width:100%;font-size:12px;font-weight:700;padding:6px 0;border:none;border-radius:6px;background:#166534;color:#fff;cursor:pointer">✅ Προγραμματίστηκε</button></div>'
-          :'';
+        var pPromoteBtn='';
         var tagCls2=m.type==='ΕΣΚΑΝΑ'?'tag-eskanа':(m.type==='ΦΕΑ'||m.type==='ΦΕΑ (Γιατρός)')?'tag-fea':'tag-filiko';
         pendingHtml+='<div class="match-card" style="border-left:4px solid #a855f7;background:#faf5ff;border-color:#d8b4fe">'
           +'<div style="margin-bottom:3px">'
@@ -813,8 +812,27 @@ function renderPendingList(){
 function togglePendingForm(){
   var card=document.getElementById('pendingAddFormCard');
   var isHidden=card.style.display==='none'||card.style.display==='';
-  card.style.display=isHidden?'block':'none';
-  if(isHidden){clearPendingForm();}
+  if(isHidden){
+    pendingEditId=null;
+    document.getElementById('pendingFormTitle').textContent='➕ Νέος αγώνας προς προγραμματισμό';
+    document.getElementById('pWeekend').value='';
+    document.getElementById('pDay').value='Σάββατο';
+    document.getElementById('pTime').value='';
+    document.getElementById('pType').value='ΕΣΚΑΝΑ';
+    document.getElementById('pCategory').value='Ανδρικό';
+    document.getElementById('pCategoryCustomWrap').style.display='none';
+    document.getElementById('pCategoryCustom').value='';
+    document.getElementById('pOpponent').value='';
+    document.getElementById('pLocation').value='home';
+    document.getElementById('pNotes').value='';
+    document.getElementById('pHomeFields').style.display='block';
+    document.getElementById('pAwayFields').style.display='none';
+    document.getElementById('pendingFormMsg').textContent='';
+    card.style.display='block';
+    card.scrollIntoView({behavior:'smooth'});
+  }else{
+    card.style.display='none';
+  }
 }
 
 function clearPendingForm(){
@@ -833,11 +851,6 @@ function clearPendingForm(){
   document.getElementById('pHomeFields').style.display='block';
   document.getElementById('pAwayFields').style.display='none';
   document.getElementById('pendingFormMsg').textContent='';
-  // κλείσε το card αν δεν είμαστε σε edit mode
-  if(!pendingEditId){
-    var card=document.getElementById('pendingAddFormCard');
-    if(card)card.style.display='none';
-  }
 }
 
 function togglePendingLocation(){
