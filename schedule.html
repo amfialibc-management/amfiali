@@ -515,7 +515,7 @@ function renderMatches(){
           +(m.time?' <span style="font-size:12px;font-weight:800;color:#6c3483"> '+m.time+'</span>':'')
           +(m.location!=='away'?' <span style="font-size:12px;font-weight:800;background:#1565c0;color:#fff;padding:2px 10px;border-radius:5px;margin-left:6px;letter-spacing:0.3px">Εντός</span>':' <span style="font-size:12px;font-weight:800;background:#b71c1c;color:#fff;padding:2px 10px;border-radius:5px;margin-left:6px;letter-spacing:0.3px">Εκτός</span>')
           +'</div>'
-          +'<div class="match-title"><span style="color:#6c3483;font-weight:800">'+(m.category||'')+'</span> <span class="'+tagCls2+'" style="font-size:10px;padding:2px 6px">'+m.type+'</span>'
+          +'<div class="match-title"><span style="color:#111;font-weight:800;font-size:15px">'+(m.category||'')+'</span> <span class="'+tagCls2+'" style="font-size:10px;padding:2px 6px">'+m.type+'</span>'
           +'</div>'
           +(m.opponent?'<div class="match-info">vs '+m.opponent+'</div>':'')
           +(m.location==='home'&&m.venueType?'<div class="match-info">'+m.venueType+'</div>':'')
@@ -795,7 +795,7 @@ function renderPendingList(){
       html+='<div style="background:#faf5ff;border:1px solid #d8b4fe;border-radius:8px;padding:10px 12px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:flex-start">';
       html+='<div>';
       html+='<div style="font-size:12px;font-weight:700;color:#6c3483">'+(m.weekend||m.day||'')+(m.time?' · '+m.time:'')+locBadge+'</div>';
-      html+='<div style="font-size:13px;font-weight:700;color:#222;margin:2px 0">'+(m.category||'')+' <span style="font-size:11px;font-weight:700;background:#6c3483;color:#fff;padding:1px 6px;border-radius:4px">'+(m.type||'')+'</span></div>';
+      html+='<div style="font-size:15px;font-weight:800;color:#111;margin:2px 0">'+(m.category||'')+' <span style="font-size:11px;font-weight:700;background:#6c3483;color:#fff;padding:1px 6px;border-radius:4px">'+(m.type||'')+'</span></div>';
       if(m.opponent)html+='<div style="font-size:12px;color:#555">vs '+m.opponent+'</div>';
       html+='<div style="font-size:11px;color:#888;margin-top:2px">'+(venue||'')+'</div>';
       if(m.notes)html+='<div style="font-size:11px;color:#aaa;margin-top:2px;font-style:italic">'+m.notes+'</div>';
@@ -954,8 +954,17 @@ window.promotePendingMatch=function(id){
   // category
   var catSel=document.getElementById('promoteCategory');
   var catOpts=Array.from(catSel.options).map(function(o){return o.value;});
-  if(catOpts.indexOf(m.category||'')!==-1)catSel.value=m.category;
-  else catSel.value='Ανδρικό';
+  // filter out __other__ from known options for comparison
+  var knownCatOpts=catOpts.filter(function(v){return v!=='__other__';});
+  if(knownCatOpts.indexOf(m.category||'')!==-1){
+    catSel.value=m.category;
+    document.getElementById('promoteCategoryCustomWrap').style.display='none';
+    document.getElementById('promoteCategoryCustom').value='';
+  }else{
+    catSel.value='__other__';
+    document.getElementById('promoteCategoryCustomWrap').style.display='block';
+    document.getElementById('promoteCategoryCustom').value=m.category||'';
+  }
   document.getElementById('promoteOpponent').value=m.opponent||'';
   document.getElementById('promoteLocation').value=m.location||'home';
   togglePromoteLocation();
@@ -972,6 +981,8 @@ window.promotePendingMatch=function(id){
 };
 window.closePromoteModal=function(){
   document.getElementById('promoteModal').style.display='none';
+  document.getElementById('promoteCategoryCustomWrap').style.display='none';
+  document.getElementById('promoteCategoryCustom').value='';
   promoteId=null;
 };
 var GR_DAYS=['Κυριακή','Δευτέρα','Τρίτη','Τετάρτη','Πέμπτη','Παρασκευή','Σάββατο'];
@@ -986,7 +997,9 @@ window.confirmPromote=async function(){
     day:dayName,
     time:document.getElementById('promoteTime').value,
     type:document.getElementById('promoteType').value,
-    category:document.getElementById('promoteCategory').value,
+    category:(document.getElementById('promoteCategory').value==='__other__'
+      ?document.getElementById('promoteCategoryCustom').value.trim()
+      :document.getElementById('promoteCategory').value),
     opponent:document.getElementById('promoteOpponent').value.trim(),
     location:loc,
     venueType:loc==='home'?document.getElementById('promoteVenueType').value:'',
@@ -1027,7 +1040,7 @@ window.confirmPromote=async function(){
       </div>
       <div>
         <div class="lbl">Κατηγορία</div>
-        <select id="promoteCategory" style="width:100%">
+        <select id="promoteCategory" onchange="document.getElementById('promoteCategoryCustomWrap').style.display=this.value==='__other__'?'block':'none'" style="width:100%">
           <option value="Ανδρικό">Ανδρικό</option>
           <option value="Εφηβικό">Εφηβικό</option>
           <option value="Κορασίδες">Κορασίδες</option>
@@ -1040,7 +1053,11 @@ window.confirmPromote=async function(){
           <option value="2019-2020-2021 (2018)">Ακαδ. 2019-2020-2021 (2018)</option>
           <option value="Κορίτσια Α">Ακαδ. Κορίτσια Α</option>
           <option value="Κορίτσια Β">Ακαδ. Κορίτσια Β</option>
+          <option value="__other__">Ορισμός κατηγορίας...</option>
         </select>
+        <div id="promoteCategoryCustomWrap" style="display:none;margin-top:6px">
+          <input id="promoteCategoryCustom" placeholder="Κατηγορία αγώνα..." style="width:100%">
+        </div>
       </div>
       <div>
         <div class="lbl">Αντίπαλος</div>
