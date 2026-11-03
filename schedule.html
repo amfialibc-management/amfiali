@@ -77,7 +77,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#1a3a6a}
   </div>
   <div id="addBtnWrap" style="display:none;gap:8px;flex-wrap:wrap;padding:0 12px 12px">
     <button class="btn btn-blue" onclick="toggleForm()" style="font-size:13px;height:38px;padding:0 18px;flex:1;min-width:130px">+ Προσθήκη αγώνα</button>
-    <button class="btn" onclick="togglePendingSection()" style="font-size:13px;height:38px;padding:0 18px;flex:1;min-width:160px;background:#6c3483;color:#fff">🗓 Αγώνες για Προγραμματισμό</button>
+    <button class="btn" onclick="togglePendingForm()" style="font-size:13px;height:38px;padding:0 18px;flex:1;min-width:160px;background:#6c3483;color:#fff">+ Προσθήκη αγώνα για προγραμματισμό</button>
   </div>
 
   <!-- Add form - admin only -->
@@ -179,11 +179,10 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#1a3a6a}
   </div>
 
   <!-- Pending Schedule Section -->
-  <div id="pendingSection" style="display:none;margin-bottom:12px">
-    <div class="card" style="border-left:4px solid #6c3483">
-      <div class="card-title" style="color:#6c3483">🗓 Αγώνες για Προγραμματισμό</div>
-      <!-- Pending Add Form -->
-      <div id="pendingAddForm" style="display:none;margin-top:12px;padding-top:12px;border-top:1px solid #eee">
+  <!-- Pending Add Form (standalone, shown/hidden by button) -->
+  <div id="pendingSection" style="margin-bottom:12px">
+    <div class="card" style="border-left:4px solid #6c3483;display:none" id="pendingAddFormCard">
+      <div id="pendingAddForm" style="display:block">
         <div class="card-title" id="pendingFormTitle" style="font-size:14px">➕ Νέος αγώνας προς προγραμματισμό</div>
         <div id="pendingFormMsg" class="msg"></div>
         <div class="field">
@@ -289,11 +288,6 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#1a3a6a}
           <button class="btn btn-gray" onclick="clearPendingForm()">✕ Ακύρωση</button>
         </div>
       </div>
-      <!-- Pending list -->
-      <div style="margin-top:10px;display:flex;justify-content:space-between;align-items:center">
-        <button class="btn btn-blue" onclick="togglePendingForm()" id="pendingAddBtn" style="font-size:13px;height:34px;padding:0 12px;background:#6c3483">+ Προσθήκη</button>
-      </div>
-      <div id="pendingList" style="margin-top:10px"></div>
     </div>
   </div>
 
@@ -505,8 +499,11 @@ function renderMatches(){
       pendingHtml+='<div style="grid-column:1/-1;font-size:11px;font-weight:800;color:#6c3483;text-transform:uppercase;letter-spacing:0.5px;margin:4px 0 4px;padding:3px 10px;background:#f3e8ff;border-radius:6px;display:inline-block">📅 '+wk+'</div>';
       pendingGroups[wk].forEach(function(m){
         var pAdminBtns=pendingAdminBtns
-          ?'<button style="font-size:10px;height:20px;padding:0 6px;border-radius:4px;border:1px solid #d8b4fe;background:#f3e8ff;color:#6c3483;cursor:pointer" data-id="'+m.id+'" onclick="editPendingMatch(this.dataset.id)">Επεξ</button>'
-           +'<button style="font-size:10px;height:20px;padding:0 6px;border-radius:4px;border:1px solid #fca5a5;background:#f8d7da;color:#721c24;cursor:pointer" data-id="'+m.id+'" onclick="deletePendingMatch(this.dataset.id)">Διαγρ</button>'
+          ?'<button style="font-size:10px;height:20px;padding:0 6px;border-radius:4px;border:1px solid #d8b4fe;background:#f3e8ff;color:#6c3483;cursor:pointer" data-id="'+m.id+'" onclick="editPendingMatch(this.dataset.id)">✏️</button>'
+           +'<button style="font-size:10px;height:20px;padding:0 6px;border-radius:4px;border:1px solid #fca5a5;background:#f8d7da;color:#721c24;cursor:pointer" data-id="'+m.id+'" onclick="deletePendingMatch(this.dataset.id)">🗑</button>'
+          :'';
+        var pPromoteBtn=pendingAdminBtns
+          ?'<div style="margin-top:8px"><button data-id="'+m.id+'" onclick="promotePendingMatch(this.dataset.id)" style="width:100%;font-size:12px;font-weight:700;padding:6px 0;border:none;border-radius:6px;background:#166534;color:#fff;cursor:pointer">✅ Προγραμματίστηκε</button></div>'
           :'';
         var tagCls2=m.type==='ΕΣΚΑΝΑ'?'tag-eskanа':(m.type==='ΦΕΑ'||m.type==='ΦΕΑ (Γιατρός)')?'tag-fea':'tag-filiko';
         pendingHtml+='<div class="match-card" style="border-left:4px solid #a855f7;background:#faf5ff;border-color:#d8b4fe">'
@@ -521,7 +518,8 @@ function renderMatches(){
           +(m.location==='home'&&m.venueType?'<div class="match-info">'+m.venueType+'</div>':'')
           +(m.location==='away'&&m.venue?'<div class="match-info">'+m.venue+'</div>':'')
           +(m.notes?'<div class="match-loc" style="margin-top:2px">'+m.notes+'</div>':'')
-          +(pAdminBtns?'<div class="match-actions" style="margin-top:auto">'+pAdminBtns+'</div>':'')
+          +(pAdminBtns?'<div class="match-actions" style="margin-top:6px">'+pAdminBtns+'</div>':'')
+          +pPromoteBtn
           +'</div>';
       });
     });
@@ -812,15 +810,10 @@ function renderPendingList(){
   el.innerHTML=html;
 }
 
-function togglePendingSection(){
-  var s=document.getElementById('pendingSection');
-  s.style.display=s.style.display==='none'?'block':'none';
-}
-
 function togglePendingForm(){
-  var f=document.getElementById('pendingAddForm');
-  var isHidden=f.style.display==='none'||f.style.display==='';
-  f.style.display=isHidden?'block':'none';
+  var card=document.getElementById('pendingAddFormCard');
+  var isHidden=card.style.display==='none'||card.style.display==='';
+  card.style.display=isHidden?'block':'none';
   if(isHidden){clearPendingForm();}
 }
 
@@ -840,6 +833,11 @@ function clearPendingForm(){
   document.getElementById('pHomeFields').style.display='block';
   document.getElementById('pAwayFields').style.display='none';
   document.getElementById('pendingFormMsg').textContent='';
+  // κλείσε το card αν δεν είμαστε σε edit mode
+  if(!pendingEditId){
+    var card=document.getElementById('pendingAddFormCard');
+    if(card)card.style.display='none';
+  }
 }
 
 function togglePendingLocation(){
@@ -890,7 +888,8 @@ window.savePendingMatch=async function(){
     }else{
       await db.collection('pending_schedule').add(data);
     }
-    document.getElementById('pendingAddForm').style.display='none';
+    document.getElementById('pendingAddFormCard').style.display='none';
+    pendingEditId=null;
     clearPendingForm();
   }catch(e){document.getElementById('pendingFormMsg').textContent='Σφάλμα: '+e.message;}
 };
@@ -898,9 +897,9 @@ window.savePendingMatch=async function(){
 window.editPendingMatch=function(id){
   var m=pendingMatches.find(function(x){return x.id===id;});
   if(!m)return;
-  // Άνοιξε το section αν είναι κλειστό
-  var ps=document.getElementById('pendingSection');
-  if(ps.style.display==='none'||ps.style.display==='')ps.style.display='block';
+  // Άνοιξε τη φόρμα αν είναι κλειστή
+  var card=document.getElementById('pendingAddFormCard');
+  if(card)card.style.display='block';
   pendingEditId=id;
   document.getElementById('pendingFormTitle').textContent='✏️ Επεξεργασία αγώνα';
   document.getElementById('pWeekend').value=m.weekend||'';
@@ -927,8 +926,7 @@ window.editPendingMatch=function(id){
   if(m.venueType)document.getElementById('pVenueType').value=m.venueType;
   if(m.venue)document.getElementById('pVenue').value=m.venue;
   if(m.address)document.getElementById('pAddress').value=m.address;
-  document.getElementById('pendingAddForm').style.display='block';
-  document.getElementById('pendingAddForm').scrollIntoView({behavior:'smooth'});
+  document.getElementById('pendingAddFormCard').scrollIntoView({behavior:'smooth'});
 };
 
 window.deletePendingMatch=async function(id){
