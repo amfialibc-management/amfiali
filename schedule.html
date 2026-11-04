@@ -460,7 +460,7 @@ function renderMatches(){
       :'';
     var isHome=m.location!=='away';
     var cardClass='match-card'+(isCancelled?' is-cancelled':isPending?' is-pending':'')+(isHome?' is-home':'');
-    return '<div class="'+cardClass+'">'
+    return '<div class="'+cardClass+'" onclick="viewMatch(\''+m.id+'\')" style="cursor:pointer">'
       +overlay
       +'<div style="margin-bottom:3px">'
        +'<span style="font-size:'+(big?'14':'11')+'px;font-weight:800;color:'+(m.day==='Κυριακή'?'#e67e22':m.day==='Σάββατο'?'#27ae60':'#3498db')+'">'+( m.day||'')+'</span>'
@@ -473,7 +473,7 @@ function renderMatches(){
       +(m.location==='away'&&m.venue?'<div class="match-info">'+m.venue+'</div>':'')
       +(m.location==='away'&&m.address?'<div class="match-loc">'+m.address+'</div>':'')
       +(m.notes?'<div class="match-loc" style="margin-top:2px">'+m.notes+'</div>':'')
-      +(adminBtns?'<div class="match-actions" style="margin-top:auto">'+adminBtns+'</div>':'')
+      +(adminBtns?'<div class="match-actions" style="margin-top:auto" onclick="event.stopPropagation()">'+adminBtns+'</div>':'')
       +'</div>';
   }).join('');
 
@@ -996,6 +996,51 @@ window.closePromoteModal=function(){
   document.getElementById('promoteCategoryCustom').value='';
   promoteId=null;
 };
+// View match modal
+window.viewMatch=function(id){
+  var m=matches.find(function(x){return x.id===id;});
+  if(!m)return;
+  var GR_MONTHS=['Ιαν','Φεβ','Μαρ','Απρ','Μαΐ','Ιουν','Ιουλ','Αυγ','Σεπ','Οκτ','Νοε','Δεκ'];
+  // Header
+  var dayColor=m.day==='Κυριακή'?'#e67e22':m.day==='Σάββατο'?'#27ae60':'#3498db';
+  var dayEl=document.getElementById('viewModalDay');
+  dayEl.style.color=dayColor;
+  var dateStr='';
+  if(m.date){
+    var d=new Date(m.date+'T00:00:00');
+    dateStr=d.getDate()+' '+GR_MONTHS[d.getMonth()]+' '+d.getFullYear();
+  }
+  dayEl.textContent=(m.day||'')+(dateStr?' · '+dateStr:'')+(m.time?' · '+m.time:'');
+  document.getElementById('viewModalTitle').textContent=(m.category||'')+' — '+(m.type||'');
+  // Status badge
+  var statusHtml='';
+  if(m.status==='cancelled')statusHtml='<span style="background:#f8d7da;color:#721c24;font-size:12px;font-weight:700;padding:3px 10px;border-radius:6px">✕ Ακυρώθηκε</span>';
+  else if(m.status==='pending')statusHtml='<span style="background:#fff3cd;color:#856404;font-size:12px;font-weight:700;padding:3px 10px;border-radius:6px">? Αναμένεται</span>';
+  document.getElementById('viewModalStatus').innerHTML=statusHtml;
+  // Rows
+  var rows=[];
+  if(m.opponent)rows.push({icon:'🆚',label:'Αντίπαλος',val:m.opponent});
+  if(m.location==='home'){
+    rows.push({icon:'📍',label:'Έδρα',val:'<span style="background:#1565c0;color:#fff;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:700">Εντός</span>'});
+    if(m.venueType)rows.push({icon:'🏟',label:'Γήπεδο',val:m.venueType});
+  }else{
+    rows.push({icon:'📍',label:'Έδρα',val:'<span style="background:#b71c1c;color:#fff;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:700">Εκτός</span>'});
+    if(m.venue)rows.push({icon:'🏟',label:'Γήπεδο',val:m.venue});
+    if(m.address)rows.push({icon:'🗺',label:'Διεύθυνση',val:m.address});
+  }
+  if(m.notes)rows.push({icon:'📝',label:'Σημειώσεις',val:m.notes});
+  document.getElementById('viewModalRows').innerHTML=rows.map(function(r){
+    return '<div style="display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid #f0f0f0">'
+      +'<span style="font-size:16px;width:24px;text-align:center;flex-shrink:0">'+r.icon+'</span>'
+      +'<div><div style="font-size:11px;color:#999;font-weight:600;text-transform:uppercase;letter-spacing:0.4px">'+r.label+'</div>'
+      +'<div style="font-size:14px;font-weight:600;color:#111;margin-top:1px">'+r.val+'</div></div>'
+      +'</div>';
+  }).join('');
+  document.getElementById('viewModal').style.display='flex';
+};
+window.closeViewModal=function(){
+  document.getElementById('viewModal').style.display='none';
+};
 var GR_DAYS=['Κυριακή','Δευτέρα','Τρίτη','Τετάρτη','Πέμπτη','Παρασκευή','Σάββατο'];
 window.confirmPromote=async function(){
   if(!promoteId)return;
@@ -1106,6 +1151,23 @@ window.confirmPromote=async function(){
     <div style="display:flex;gap:8px;margin-top:16px">
       <button onclick="confirmPromote()" style="flex:1;height:40px;background:#166534;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer">✅ Αποθήκευση</button>
       <button onclick="closePromoteModal()" style="flex:1;height:40px;background:#f5f5f5;color:#333;border:none;border-radius:8px;font-size:14px;cursor:pointer">Ακύρωση</button>
+    </div>
+  </div>
+</div>
+
+<!-- View Match Modal -->
+<div id="viewModal" onclick="if(event.target===this)closeViewModal()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:998;align-items:center;justify-content:center;padding:16px">
+  <div style="background:#fff;border-radius:16px;width:100%;max-width:420px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.2)">
+    <div id="viewModalHeader" style="padding:16px 18px 12px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:flex-start">
+      <div>
+        <div id="viewModalDay" style="font-size:13px;font-weight:800;color:#3498db;margin-bottom:2px"></div>
+        <div id="viewModalTitle" style="font-size:18px;font-weight:800;color:#111;line-height:1.2"></div>
+      </div>
+      <button onclick="closeViewModal()" style="background:none;border:none;font-size:20px;cursor:pointer;color:#999;padding:0 0 0 12px;line-height:1">✕</button>
+    </div>
+    <div style="padding:14px 18px 18px">
+      <div id="viewModalStatus" style="margin-bottom:10px"></div>
+      <div id="viewModalRows" style="display:flex;flex-direction:column;gap:8px"></div>
     </div>
   </div>
 </div>
