@@ -1019,21 +1019,20 @@ window.viewMatch=function(id){
   document.getElementById('viewModalStatus').innerHTML=statusHtml;
   // Rows
   var rows=[];
-  if(m.opponent)rows.push({icon:'🆚',label:'Αντίπαλος',val:m.opponent});
+  if(m.opponent)rows.push({label:'Αντίπαλος',val:m.opponent});
   if(m.location==='home'){
-    rows.push({icon:'📍',label:'Έδρα',val:'<span style="background:#1565c0;color:#fff;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:700">Εντός</span>'});
-    if(m.venueType)rows.push({icon:'🏟',label:'Γήπεδο',val:m.venueType});
+    rows.push({label:'Έδρα',val:'<span style="background:#1565c0;color:#fff;padding:2px 10px;border-radius:4px;font-size:13px;font-weight:700">Εντός</span>'});
+    if(m.venueType)rows.push({label:'Γήπεδο',val:m.venueType});
   }else{
-    rows.push({icon:'📍',label:'Έδρα',val:'<span style="background:#b71c1c;color:#fff;padding:2px 8px;border-radius:4px;font-size:12px;font-weight:700">Εκτός</span>'});
-    if(m.venue)rows.push({icon:'🏟',label:'Γήπεδο',val:m.venue});
-    if(m.address)rows.push({icon:'🗺',label:'Διεύθυνση',val:m.address});
+    rows.push({label:'Έδρα',val:'<span style="background:#b71c1c;color:#fff;padding:2px 10px;border-radius:4px;font-size:13px;font-weight:700">Εκτός</span>'});
+    if(m.venue)rows.push({label:'Γήπεδο',val:m.venue});
+    if(m.address)rows.push({label:'Διεύθυνση',val:m.address});
   }
-  if(m.notes)rows.push({icon:'📝',label:'Σημειώσεις',val:m.notes});
+  if(m.notes)rows.push({label:'Σημειώσεις',val:m.notes});
   document.getElementById('viewModalRows').innerHTML=rows.map(function(r){
-    return '<div style="display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid #f0f0f0">'
-      +'<span style="font-size:16px;width:24px;text-align:center;flex-shrink:0">'+r.icon+'</span>'
-      +'<div><div style="font-size:11px;color:#999;font-weight:600;text-transform:uppercase;letter-spacing:0.4px">'+r.label+'</div>'
-      +'<div style="font-size:14px;font-weight:600;color:#111;margin-top:1px">'+r.val+'</div></div>'
+    return '<div style="padding:9px 0;border-bottom:1px solid #f0f0f0">'
+      +'<div style="font-size:11px;color:#999;font-weight:600;text-transform:uppercase;letter-spacing:0.4px">'+r.label+'</div>'
+      +'<div style="font-size:16px;font-weight:600;color:#111;margin-top:2px">'+r.val+'</div>'
       +'</div>';
   }).join('');
   document.getElementById('viewModal').style.display='flex';
