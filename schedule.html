@@ -398,12 +398,20 @@ if(_role==='admin'){
 var archBtn=document.createElement('button');
 archBtn.textContent='🗃️ Αρχείο αγώνων';
 archBtn.className='btn btn-gray';
-archBtn.style.cssText='width:100%;margin-top:16px;font-size:13px';
+archBtn.style.cssText='width:100%;margin-top:8px;font-size:13px';
 archBtn.onclick=function(){
   var sec=document.getElementById('archiveSection');
   sec.style.display=sec.style.display==='none'?'block':'none';
 };
 document.querySelector('.wrap').appendChild(archBtn);
+
+// List view button - visible to all
+var listBtn=document.createElement('button');
+listBtn.textContent='📋 Λίστα αγώνων';
+listBtn.className='btn btn-gray';
+listBtn.style.cssText='width:100%;margin-top:8px;font-size:13px';
+listBtn.onclick=function(){openListModal();};
+document.querySelector('.wrap').appendChild(listBtn);
 
 var matches=[];
 var filters={day:'all',type:'all',venue:'all'};
@@ -1050,6 +1058,81 @@ window.viewMatch=function(id){
 window.closeViewModal=function(){
   document.getElementById('viewModal').style.display='none';
 };
+
+// List modal
+var GR_MONTHS_FULL=['Ιανουάριος','Φεβρουάριος','Μάρτιος','Απρίλιος','Μάιος','Ιούνιος','Ιούλιος','Αύγουστος','Σεπτέμβριος','Οκτώβριος','Νοέμβριος','Δεκέμβριος'];
+window.openListModal=function(){
+  // Populate month filter
+  var monthSel=document.getElementById('listFilterMonth');
+  var months={};
+  matches.forEach(function(m){if(m.date){var mo=m.date.substring(0,7);months[mo]=true;}});
+  var sortedMonths=Object.keys(months).sort();
+  monthSel.innerHTML='<option value="all">Όλοι οι μήνες</option>';
+  sortedMonths.forEach(function(mo){
+    var d=new Date(mo+'-01');
+    var label=GR_MONTHS_FULL[d.getMonth()]+' '+d.getFullYear();
+    monthSel.innerHTML+='<option value="'+mo+'">'+label+'</option>';
+  });
+  // Populate category filter
+  var catSel=document.getElementById('listFilterCat');
+  var cats={};
+  matches.forEach(function(m){if(m.category)cats[m.category]=true;});
+  catSel.innerHTML='<option value="all">Όλες οι κατηγορίες</option>';
+  Object.keys(cats).sort().forEach(function(c){
+    catSel.innerHTML+='<option value="'+c+'">'+c+'</option>';
+  });
+  // Reset filters
+  document.getElementById('listFilterType').value='all';
+  document.getElementById('listFilterVenue').value='all';
+  renderListTable();
+  document.getElementById('listModal').style.display='flex';
+};
+window.closeListModal=function(){
+  document.getElementById('listModal').style.display='none';
+};
+window.renderListTable=function(){
+  var mo=document.getElementById('listFilterMonth').value;
+  var cat=document.getElementById('listFilterCat').value;
+  var type=document.getElementById('listFilterType').value;
+  var venue=document.getElementById('listFilterVenue').value;
+  var GR_MONTHS=['Ιαν','Φεβ','Μαρ','Απρ','Μαΐ','Ιουν','Ιουλ','Αυγ','Σεπ','Οκτ','Νοε','Δεκ'];
+  var dayColors={'Κυριακή':'#e67e22','Σάββατο':'#27ae60'};
+  var filtered=matches.filter(function(m){
+    if(mo!=='all'&&(!m.date||m.date.substring(0,7)!==mo))return false;
+    if(cat!=='all'&&m.category!==cat)return false;
+    if(type!=='all'&&m.type!==type)return false;
+    if(venue!=='all'){if(venue==='home'&&m.location==='away')return false;if(venue==='away'&&m.location!=='away')return false;}
+    return true;
+  }).sort(function(a,b){return (a.date||'').localeCompare(b.date||'');});
+  document.getElementById('listCount').textContent=filtered.length+' αγώνες';
+  var tbody=document.getElementById('listTableBody');
+  if(!filtered.length){
+    tbody.innerHTML='<tr><td colspan="8" style="padding:20px;text-align:center;color:#aaa;font-size:13px">Δεν βρέθηκαν αγώνες</td></tr>';
+    return;
+  }
+  tbody.innerHTML=filtered.map(function(m,i){
+    var dateStr='';
+    if(m.date){var d=new Date(m.date+'T00:00:00');dateStr=d.getDate()+' '+GR_MONTHS[d.getMonth()];}
+    var dayColor=dayColors[m.day]||'#3498db';
+    var isHome=m.location!=='away';
+    var venueName=isHome?(m.venueType||''):(m.venue||'');
+    var locBadge=isHome
+      ?'<span style="background:#eaf4fb;color:#1a3a6a;font-size:11px;font-weight:700;padding:1px 7px;border-radius:4px;border:1px solid #b3d6ee">Εντός</span>'
+      :'<span style="background:#f8f8f8;color:#555;font-size:11px;font-weight:700;padding:1px 7px;border-radius:4px;border:1px solid #ddd">Εκτός</span>';
+    var statusStyle=m.status==='cancelled'?'opacity:0.45;text-decoration:line-through':m.status==='pending'?'opacity:0.6':'';
+    var rowBg=i%2===0?'#fff':'#fafafa';
+    return '<tr style="background:'+rowBg+';'+statusStyle+'">'
+      +'<td style="padding:8px 12px;border-bottom:1px solid #f0f0f0;white-space:nowrap;font-weight:600;color:#222">'+dateStr+'</td>'
+      +'<td style="padding:8px 12px;border-bottom:1px solid #f0f0f0;white-space:nowrap;font-weight:700;color:'+dayColor+'">'+( m.day||'')+'</td>'
+      +'<td style="padding:8px 12px;border-bottom:1px solid #f0f0f0;white-space:nowrap;font-weight:600;color:#1a3a6a">'+(m.time||'—')+'</td>'
+      +'<td style="padding:8px 12px;border-bottom:1px solid #f0f0f0;font-weight:700;color:#0000ff">'+(m.category||'')+'</td>'
+      +'<td style="padding:8px 12px;border-bottom:1px solid #f0f0f0;white-space:nowrap">'+(m.type||'')+'</td>'
+      +'<td style="padding:8px 12px;border-bottom:1px solid #f0f0f0">'+(m.opponent||'—')+'</td>'
+      +'<td style="padding:8px 12px;border-bottom:1px solid #f0f0f0">'+locBadge+'</td>'
+      +'<td style="padding:8px 12px;border-bottom:1px solid #f0f0f0;color:#555;font-size:12px">'+(venueName||'—')+'</td>'
+      +'</tr>';
+  }).join('');
+};
 var GR_DAYS=['Κυριακή','Δευτέρα','Τρίτη','Τετάρτη','Πέμπτη','Παρασκευή','Σάββατο'];
 window.confirmPromote=async function(){
   if(!promoteId)return;
@@ -1160,6 +1243,57 @@ window.confirmPromote=async function(){
     <div style="display:flex;gap:8px;margin-top:16px">
       <button onclick="confirmPromote()" style="flex:1;height:40px;background:#166534;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer">✅ Αποθήκευση</button>
       <button onclick="closePromoteModal()" style="flex:1;height:40px;background:#f5f5f5;color:#333;border:none;border-radius:8px;font-size:14px;cursor:pointer">Ακύρωση</button>
+    </div>
+  </div>
+</div>
+
+<!-- List Modal -->
+<div id="listModal" onclick="if(event.target===this)closeListModal()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:997;align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto">
+  <div style="background:#fff;border-radius:16px;width:100%;max-width:700px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.2);margin:auto">
+    <!-- Header -->
+    <div style="padding:16px 18px 12px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center">
+      <div style="font-size:17px;font-weight:800;color:#1a3a6a">📋 Λίστα Αγώνων</div>
+      <button onclick="closeListModal()" style="background:none;border:none;font-size:20px;cursor:pointer;color:#999">✕</button>
+    </div>
+    <!-- Filters -->
+    <div style="padding:12px 18px;border-bottom:1px solid #f0f0f0;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+      <select id="listFilterMonth" onchange="renderListTable()" style="height:34px;font-size:12px;border:1px solid #ddd;border-radius:6px;padding:0 8px;min-width:110px">
+        <option value="all">Όλοι οι μήνες</option>
+      </select>
+      <select id="listFilterCat" onchange="renderListTable()" style="height:34px;font-size:12px;border:1px solid #ddd;border-radius:6px;padding:0 8px;min-width:120px">
+        <option value="all">Όλες οι κατηγορίες</option>
+      </select>
+      <select id="listFilterType" onchange="renderListTable()" style="height:34px;font-size:12px;border:1px solid #ddd;border-radius:6px;padding:0 8px;min-width:100px">
+        <option value="all">Όλα τα είδη</option>
+        <option value="ΕΣΚΑΝΑ">ΕΣΚΑΝΑ</option>
+        <option value="ΦΕΑ">ΦΕΑ</option>
+        <option value="ΦΕΑ (Γιατρός)">ΦΕΑ (Γιατρός)</option>
+        <option value="Φιλικό">Φιλικό</option>
+      </select>
+      <select id="listFilterVenue" onchange="renderListTable()" style="height:34px;font-size:12px;border:1px solid #ddd;border-radius:6px;padding:0 8px;min-width:100px">
+        <option value="all">Εντός &amp; Εκτός</option>
+        <option value="home">Εντός έδρας</option>
+        <option value="away">Εκτός έδρας</option>
+      </select>
+      <span id="listCount" style="font-size:12px;color:#888;margin-left:auto;white-space:nowrap"></span>
+    </div>
+    <!-- Table -->
+    <div style="overflow-x:auto;max-height:60vh;overflow-y:auto">
+      <table id="listTable" style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead>
+          <tr style="background:#f7f9fc;position:sticky;top:0;z-index:1">
+            <th style="padding:9px 12px;text-align:left;font-weight:700;color:#1a3a6a;border-bottom:2px solid #e8eef5;white-space:nowrap">Ημ/νία</th>
+            <th style="padding:9px 12px;text-align:left;font-weight:700;color:#1a3a6a;border-bottom:2px solid #e8eef5;white-space:nowrap">Ημέρα</th>
+            <th style="padding:9px 12px;text-align:left;font-weight:700;color:#1a3a6a;border-bottom:2px solid #e8eef5;white-space:nowrap">Ώρα</th>
+            <th style="padding:9px 12px;text-align:left;font-weight:700;color:#1a3a6a;border-bottom:2px solid #e8eef5">Κατηγορία</th>
+            <th style="padding:9px 12px;text-align:left;font-weight:700;color:#1a3a6a;border-bottom:2px solid #e8eef5">Είδος</th>
+            <th style="padding:9px 12px;text-align:left;font-weight:700;color:#1a3a6a;border-bottom:2px solid #e8eef5">Αντίπαλος</th>
+            <th style="padding:9px 12px;text-align:left;font-weight:700;color:#1a3a6a;border-bottom:2px solid #e8eef5">Έδρα</th>
+            <th style="padding:9px 12px;text-align:left;font-weight:700;color:#1a3a6a;border-bottom:2px solid #e8eef5">Γήπεδο</th>
+          </tr>
+        </thead>
+        <tbody id="listTableBody"></tbody>
+      </table>
     </div>
   </div>
 </div>
