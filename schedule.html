@@ -1062,9 +1062,14 @@ window.closeViewModal=function(){
 // List modal
 var listSortCol='date';
 var listSortDir=1; // 1=asc, -1=desc
+var listSeqMap={};
 window.openListModal=function(){
   listSortCol='date';
   listSortDir=1;
+  // Υπολογισμός σταθερού Α/Α βάσει ημερομηνίας (μία φορά)
+  var byDate=matches.slice().sort(function(a,b){return (a.date||'').localeCompare(b.date||'');});
+  listSeqMap={};
+  byDate.forEach(function(m,i){listSeqMap[m.id]=i+1;});
   renderListTable();
   document.getElementById('listModal').style.display='flex';
 };
@@ -1107,7 +1112,7 @@ window.renderListTable=function(){
   document.getElementById('listCount').textContent=sorted.length+' αγώνες';
   var tbody=document.getElementById('listTableBody');
   if(!sorted.length){
-    tbody.innerHTML='<tr><td colspan="8" style="padding:20px;text-align:center;color:#aaa;font-size:13px">Δεν υπάρχουν αγώνες</td></tr>';
+    tbody.innerHTML='<tr><td colspan="9" style="padding:20px;text-align:center;color:#aaa;font-size:13px">Δεν υπάρχουν αγώνες</td></tr>';
     return;
   }
   tbody.innerHTML=sorted.map(function(m,i){
@@ -1121,7 +1126,9 @@ window.renderListTable=function(){
       :'<span style="background:#f8f8f8;color:#555;font-size:11px;font-weight:700;padding:1px 7px;border-radius:4px;border:1px solid #ddd">Εκτός</span>';
     var statusStyle=m.status==='cancelled'?'opacity:0.45;text-decoration:line-through':m.status==='pending'?'opacity:0.6':'';
     var rowBg=i%2===0?'#fff':'#fafafa';
+    var seq=listSeqMap[m.id]||'';
     return '<tr style="background:'+rowBg+';'+statusStyle+'">'
+      +'<td style="padding:8px 12px;border-bottom:1px solid #f0f0f0;text-align:center;font-size:11px;color:#aaa;font-weight:700">'+seq+'</td>'
       +'<td style="padding:8px 12px;border-bottom:1px solid #f0f0f0;white-space:nowrap;font-weight:600;color:#222">'+dateStr+'</td>'
       +'<td style="padding:8px 12px;border-bottom:1px solid #f0f0f0;white-space:nowrap;font-weight:700;color:'+dayColor+'">'+(m.day||'')+'</td>'
       +'<td style="padding:8px 12px;border-bottom:1px solid #f0f0f0;white-space:nowrap;font-weight:600;color:#1a3a6a">'+(m.time||'—')+'</td>'
@@ -1263,6 +1270,7 @@ window.confirmPromote=async function(){
       <table id="listTable" style="width:100%;border-collapse:collapse;font-size:13px">
         <thead>
           <tr style="background:#f7f9fc;position:sticky;top:0;z-index:1">
+            <th style="padding:9px 12px;text-align:center;font-weight:700;color:#1a3a6a;border-bottom:2px solid #e8eef5;white-space:nowrap;width:36px">Α/Α</th>
             <th onclick="sortListTable('date')" style="padding:9px 12px;text-align:left;font-weight:700;color:#1a3a6a;border-bottom:2px solid #e8eef5;white-space:nowrap;cursor:pointer;user-select:none">Ημ/νία <span id="sort_date"></span></th>
             <th onclick="sortListTable('day')" style="padding:9px 12px;text-align:left;font-weight:700;color:#1a3a6a;border-bottom:2px solid #e8eef5;white-space:nowrap;cursor:pointer;user-select:none">Ημέρα <span id="sort_day"></span></th>
             <th onclick="sortListTable('time')" style="padding:9px 12px;text-align:left;font-weight:700;color:#1a3a6a;border-bottom:2px solid #e8eef5;white-space:nowrap;cursor:pointer;user-select:none">Ώρα <span id="sort_time"></span></th>
