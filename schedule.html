@@ -396,7 +396,7 @@ if(_role==='admin'){
 
 // List view button - visible to all (πάνω από αρχείο)
 var listBtn=document.createElement('button');
-listBtn.textContent='📋 Λίστα αγώνων';
+listBtn.textContent='📋 Προγραμματισμένοι αγώνες σε λίστα';
 listBtn.className='btn btn-gray';
 listBtn.style.cssText='width:100%;margin-top:16px;font-size:13px';
 listBtn.onclick=function(){openListModal();};
@@ -404,7 +404,7 @@ document.querySelector('.wrap').appendChild(listBtn);
 
 // Archive button - visible to all
 var archBtn=document.createElement('button');
-archBtn.textContent='Αγώνες';
+archBtn.textContent='Αρχείο αγώνων';
 archBtn.className='btn btn-gray';
 archBtn.style.cssText='width:100%;margin-top:8px;font-size:13px';
 archBtn.onclick=function(){
@@ -1247,7 +1247,7 @@ window.confirmPromote=async function(){
     <!-- Header -->
     <div style="padding:14px 18px 12px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center">
       <div>
-        <span style="font-size:17px;font-weight:800;color:#1a3a6a">📋 Λίστα Αγώνων</span>
+        <span style="font-size:17px;font-weight:800;color:#1a3a6a">📋 Προγραμματισμένοι Αγώνες</span>
         <span id="listCount" style="font-size:12px;color:#888;margin-left:10px"></span>
       </div>
       <button onclick="closeListModal()" style="background:none;border:none;font-size:20px;cursor:pointer;color:#999">✕</button>
