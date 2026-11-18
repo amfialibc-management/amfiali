@@ -121,6 +121,7 @@ input:focus,select:focus{outline:none;border-color:#1a6fa8}
     </div>
     <div class="g2 mb"><div><div class="lbl">Χρονολογία Γέννησης</div><select id="pbirth"><option value="">— Επίλεξε —</option></select></div><div><div class="lbl">Τηλέφωνο επικοινωνίας</div><input id="pphone" type="tel" placeholder="π.χ. 6912345678"></div></div>
     <div class="mb"><div class="lbl">Σημειώσεις</div><input id="pnotes" placeholder="π.χ. Αδερφός του Παπαδόπουλου"></div>
+    <div class="mb"><div class="lbl">Ημερομηνία Εγγραφής <span style="color:#e74c3c">*</span></div><input id="pcreatedAt" type="date" required></div>
     <div style="text-align:right"><button class="btn btn-blue" onclick="addPlayer()">+ Προσθήκη</button></div>
     <p class="err" id="perr">Συμπλήρωσε όνομα.</p>
   </div>
@@ -495,11 +496,13 @@ function renderPlayers(){
 }
 
 window.addPlayer=async function(){
+  var createdAtVal=document.getElementById('pcreatedAt').value;
+  if(!createdAtVal){alert('Συμπλήρωσε την Ημερομηνία Εγγραφής.');document.getElementById('pcreatedAt').focus();return;}
   const name=document.getElementById('pn').value.trim();
   if(!name){document.getElementById('perr').style.display='block';return;}
   document.getElementById('perr').style.display='none';sync('loading','Αποθήκευση...');
-  await setDoc(doc(db,CP,uid()),{name,num:document.getElementById('pnum').value||'',pos:document.getElementById('ppos').value||'',st:document.getElementById('pst').value,birth:document.getElementById('pbirth').value||'',phone:document.getElementById('pphone').value.trim()||'',notes:document.getElementById('pnotes').value.trim()||'',createdAt:new Date().toISOString().slice(0,10)});
-  document.getElementById('pn').value='';document.getElementById('pnum').value='';document.getElementById('ppos').value='';document.getElementById('pbirth').value='';document.getElementById('pphone').value='';document.getElementById('pnotes').value='';
+  await setDoc(doc(db,CP,uid()),{name,num:document.getElementById('pnum').value||'',pos:document.getElementById('ppos').value||'',st:document.getElementById('pst').value,birth:document.getElementById('pbirth').value||'',phone:document.getElementById('pphone').value.trim()||'',notes:document.getElementById('pnotes').value.trim()||'',createdAt:createdAtVal});
+  document.getElementById('pn').value='';document.getElementById('pnum').value='';document.getElementById('ppos').value='';document.getElementById('pbirth').value='';document.getElementById('pphone').value='';document.getElementById('pnotes').value='';document.getElementById('pcreatedAt').value='';
 };
 window.delPlayer=async function(id){
   if(!confirm('Διαγραφή παίκτριας;'))return;
