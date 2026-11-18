@@ -198,6 +198,35 @@ h2{font-size:13px;color:#666;font-weight:400;margin-bottom:20px}
   </div>
 
   <div class="io-wrap">
+    <div class="io-title">📅 Παρουσίες ανά Μήνα</div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap">
+      <select id="attMonthSel" style="height:36px;border:1px solid #ccc;border-radius:6px;padding:0 8px;font-size:13px;flex:0 0 auto">
+        <option value="2026-09">Σεπτέμβριος 2026</option>
+        <option value="2026-10">Οκτώβριος 2026</option>
+        <option value="2026-11">Νοέμβριος 2026</option>
+        <option value="2026-12">Δεκέμβριος 2026</option>
+        <option value="2027-01">Ιανουάριος 2027</option>
+        <option value="2027-02">Φεβρουάριος 2027</option>
+        <option value="2027-03">Μάρτιος 2027</option>
+        <option value="2027-04">Απρίλιος 2027</option>
+        <option value="2027-05">Μάιος 2027</option>
+        <option value="2027-06">Ιούνιος 2027</option>
+      </select>
+      <select id="attMinSel" style="height:36px;border:1px solid #ccc;border-radius:6px;padding:0 8px;font-size:13px;flex:0 0 auto">
+        <option value="1">≥ 1 παρουσία</option>
+        <option value="2">≥ 2 παρουσίες</option>
+        <option value="3">≥ 3 παρουσίες</option>
+        <option value="4">≥ 4 παρουσίες</option>
+        <option value="5">≥ 5 παρουσίες</option>
+      </select>
+      <button class="io-btn io-exp" onclick="loadMonthAttendance()" style="cursor:pointer;flex:0 0 auto;width:auto">🔍 Εμφάνιση</button>
+      <button id="closeAttBtn" onclick="document.getElementById('attMonthList').innerHTML='';document.getElementById('attMonthCount').style.display='none';this.style.display='none';" style="display:none;cursor:pointer;flex:0 0 auto;width:auto;background:#f8d7da;color:#721c24;border:1px solid #f5c6cb;border-radius:8px;padding:6px 14px;font-size:13px;font-weight:600">✖ Κλείσιμο</button>
+      <span id="attMonthCount" style="background:#d1ecf1;color:#0c5460;border:1px solid #bee5eb;border-radius:20px;padding:4px 12px;font-size:14px;font-weight:700;display:none"></span>
+    </div>
+    <div id="attMonthList"></div>
+  </div>
+
+  <div class="io-wrap">
     <div class="io-title">📦 Εξαγωγή / Εισαγωγή Δεδομένων</div>
     <div class="io-btns">
       <button class="io-btn io-exp" onclick="exportAll()">📥 Εξαγωγή όλων</button>
@@ -448,6 +477,81 @@ async function checkAlerts(){
     var ini=(a.name||'??').slice(0,2).toUpperCase();
     return '<div class="alert-row"><div class="alert-av">'+ini+'</div><div><div style="font-size:14px;font-weight:600">'+a.name+'</div><div style="font-size:12px;color:#721c24">'+a.team+' · '+a.c+' συνεχόμενες απουσίες</div></div></div>';
   }).join('');
+}
+
+async function loadMonthAttendance(){
+  var el=document.getElementById('attMonthList');
+  var badge=document.getElementById('attMonthCount');
+  var closeBtn=document.getElementById('closeAttBtn');
+  if(badge)badge.style.display='none';
+  if(closeBtn)closeBtn.style.display='none';
+  el.innerHTML='<p style="font-size:13px;color:#999">Φόρτωση...</p>';
+  var month=document.getElementById('attMonthSel').value;
+  var minAtt=parseInt(document.getElementById('attMinSel').value)||1;
+
+  // Τμήματα χωρίς Ανδρικό, Νεανίδες, Εφηβικό
+  var TEAMS=[
+    {players:'korasides_players',attendance:'korasides_attendance',team:'Κορασίδες'},
+    {players:'paidiko_players',attendance:'paidiko_attendance',team:'Παιδικό'},
+    {players:'akademies_players',attendance:'akademies_attendance',team:'2016-2017-2018'},
+    {players:'ak_2012_2013_a_players',attendance:'ak_2012_2013_a_attendance',team:'Παμπαίδες 2012-2013'},
+    {players:'ak_2012_2013_2014_players',attendance:'ak_2012_2013_2014_attendance',team:'2013-2014 (2012)'},
+    {players:'ak_2014_2015_2016_players',attendance:'ak_2014_2015_2016_attendance',team:'2014-2015-2016'},
+    {players:'ak_2018_2019_2020_players',attendance:'ak_2018_2019_2020_attendance',team:'2019-2020-2021'},
+    {players:'ak_koritsia_a_players',attendance:'ak_koritsia_a_attendance',team:'Κορίτσια Α'},
+    {players:'ak_koritsia_b_players',attendance:'ak_koritsia_b_attendance',team:'Κορίτσια Β'},
+  ];
+
+  try{
+    var allResults=[];
+    for(var t of TEAMS){
+      try{
+        var pSnap=await db.collection(t.players).get();
+        var players=pSnap.docs.map(function(d){return{id:d.id,name:d.data().name||''};});
+        var aSnap=await db.collection(t.attendance).get();
+        var sessions=aSnap.docs.map(function(d){return d.data();}).filter(function(s){return(s.date||'').startsWith(month);});
+        players.forEach(function(p){
+          var count=0;
+          sessions.forEach(function(s){if((s.att||{})[p.id]==='p')count++;});
+          if(count>=minAtt)allResults.push({name:p.name,team:t.team,count:count});
+        });
+      }catch(e){}
+    }
+
+    // Ταξινόμηση: πρώτα κατά τμήμα, μετά κατά όνομα
+    allResults.sort(function(a,b){
+      if(a.team<b.team)return -1; if(a.team>b.team)return 1;
+      return a.name.localeCompare(b.name,'el');
+    });
+
+    if(badge){badge.textContent=allResults.length+' αθλητές';badge.style.display='inline-block';}
+    if(closeBtn)closeBtn.style.display='inline-block';
+
+    if(!allResults.length){
+      el.innerHTML='<p style="font-size:13px;color:#999">Δεν βρέθηκαν αθλητές με ≥'+minAtt+' παρουσίες.</p>';
+      return;
+    }
+
+    var monthNames={'2026-09':'Σεπτέμβριος 2026','2026-10':'Οκτώβριος 2026','2026-11':'Νοέμβριος 2026','2026-12':'Δεκέμβριος 2026','2027-01':'Ιανουάριος 2027','2027-02':'Φεβρουάριος 2027','2027-03':'Μάρτιος 2027','2027-04':'Απρίλιος 2027','2027-05':'Μάιος 2027','2027-06':'Ιούνιος 2027'};
+
+    // Ομαδοποίηση ανά τμήμα
+    var byTeam={};
+    allResults.forEach(function(r){if(!byTeam[r.team])byTeam[r.team]=[];byTeam[r.team].push(r);});
+
+    var html='<p style="font-size:12px;color:#666;margin-bottom:8px"><strong>'+(monthNames[month]||month)+'</strong> · ≥'+minAtt+' παρουσίες · <strong>'+allResults.length+'</strong> αθλητές συνολικά</p>';
+    Object.keys(byTeam).forEach(function(team){
+      var list=byTeam[team];
+      html+='<div style="margin-bottom:10px"><div style="font-size:12px;font-weight:700;color:#1a3a6a;margin-bottom:4px">'+team+' ('+list.length+')</div>';
+      html+=list.map(function(r){
+        var ini=(r.name||'??').slice(0,2).toUpperCase();
+        return '<div class="result" style="padding:8px 12px"><div class="av" style="width:30px;height:30px;font-size:11px;background:#d1ecf1;color:#0c5460">'+ini+'</div>'
+          +'<div style="flex:1;min-width:0"><div class="result-name">'+r.name+'</div></div>'
+          +'<span style="background:#d1ecf1;color:#0c5460;border-radius:12px;padding:3px 10px;font-size:12px;font-weight:700">'+r.count+' ✓</span></div>';
+      }).join('');
+      html+='</div>';
+    });
+    el.innerHTML=html;
+  }catch(e){el.innerHTML='<p style="color:#e74c3c;font-size:13px">Σφάλμα: '+e.message+'</p>';}
 }
 
 async function loadNewRegistrations(){
