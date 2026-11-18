@@ -354,6 +354,7 @@ window.toggleAddForm=function(){
   const open=f.style.display==='none';
   f.style.display=open?'block':'none';
   b.textContent=open?'✕ Κλείσιμο':'+ Προσθήκη';
+  if(open){var d=document.getElementById('pcreatedAt');if(d)d.value=new Date().toISOString().slice(0,10);}
 };
 
 // TRANSFER PLAYER
